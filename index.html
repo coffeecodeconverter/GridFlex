@@ -1,0 +1,4093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="portfolio-title" content="GridFlex">
+    <meta name="portfolio-category" content="Design">
+    <meta name="portfolio-description" content="Visual Designer for CSS Grid - Export to other Projects!">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GridFlex</title>
+    
+    <style>
+        :root {
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-500: #64748b;
+            --slate-600: #64748b;
+            --slate-900: #0f172a;
+            --indigo-50: #eef2ff;
+            --indigo-500: #6366f1;
+            --indigo-600: #4f46e5;
+            --indigo-700: #4338ca;
+            --red-50: #fef2f2;
+            --red-600: #dc2626;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--slate-50);
+            color: var(--slate-900);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            background: white;
+            border-right: 1px solid var(--slate-200);
+            display: flex;
+            flex-row: column;
+            flex-direction: column;
+            box-shadow: 10px 0 15px -3px rgb(0 0 0 / 0.05);
+            z-index: 10;
+        }
+        
+        .sidebar {
+          /* Desktop Defaults */
+          width: 380px;
+          min-width: 320px;
+          max-width: 860px;
+          height: 100vh;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          background: white;
+          border-right: 1px solid var(--slate-200);
+          transition: transform 0.3s ease; /* Smooth transition for mobile popping up */
+          z-index: 1000;
+        }
+
+        /* Ensure the content inside is scrollable when the height/width changes */
+        .sidebar-content {
+          flex: 1;
+          overflow-y: auto;
+          padding: 1rem;
+        }
+
+
+        .sidebar-header {
+            padding: 1rem 0rem 1rem 0rem;
+            border-bottom: 1px solid var(--slate-100);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.25rem;
+            color: var(--indigo-600);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-header p {
+            font-size: 0.7rem;
+            color: var(--slate-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--slate-100);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--slate-500);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: var(--indigo-600);
+            border-bottom-color: var(--indigo-600);
+            background-color: var(--indigo-50);
+        }
+
+        .tab:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem;
+        }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        
+        section label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--slate-400);
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            
+            -webkit-user-select: none; /* Safari, Chrome */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer */
+            user-select: none;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--slate-400);
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            
+            -webkit-user-select: none; /* Safari, Chrome */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer */
+            user-select: none;
+        }
+        
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .btn-outline {
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.25rem;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--indigo-50);
+            border-color: var(--indigo-300);
+        }
+
+        .track-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0px;
+        }
+
+        #layers-list{
+            max-height: 300px;
+            overflow-y: auto;
+		color:black;
+        }
+        
+        .track-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .track-controls {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            background-color: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.5rem;
+            padding: 0.1rem;
+        }
+
+        .track-btn {
+            padding: 0.3rem 0.7rem;
+            font-size: 0.65rem;
+            border: none;
+            border-radius: 0.25rem;
+            background: none;
+            cursor: pointer;
+        }
+
+        .track-btn.active {
+            background-color: var(--indigo-600);
+            color: white;
+        }
+
+        .track-input {
+            width: 100%;
+            background: white;
+            border: 1px solid var(--slate-200);
+            font-size: 0.75rem;
+            text-align: center;
+            font-family: monospace;
+            outline: none;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .btn-icon-del {
+            color: var(--slate-400);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px;
+        }
+
+        .btn-icon-del:hover {
+            color: var(--red-600);
+        }
+
+        .slider-group {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-100);
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .slider-header label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--slate-500);
+        }
+
+        .slider-header span {
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: var(--indigo-600);
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--indigo-600);
+            cursor: pointer;
+        }
+
+        .placement-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .placement-control span {
+            font-size: 0.65rem;
+            color: var(--slate-500);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stepper button {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid var(--slate-200);
+            background: white;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .stepper .value {
+            flex: 1;
+            text-align: center;
+            font-size: 0.875rem;
+            font-family: monospace;
+            background: var(--slate-100);
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            color:black;
+        }
+
+        .color-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .color-swatch {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-swatch.active {
+            border-color: var(--indigo-600);
+            transform: scale(1.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background-color: var(--indigo-600);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgb(79 70 229 / 0.2);
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--indigo-700);
+        }
+
+        .btn-danger {
+            width: 100%;
+            background-color: var(--red-50);
+            color: var(--red-600);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        /* Main Preview Styling */
+        .main-preview {
+            /*
+            flex: 1;
+            overflow-y: auto;
+            padding: 3rem;
+            background-color: var(--slate-100);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            */
+            flex: 1;
+            padding: 0px 40px 40px 40px;
+            background-color: #f1f5f9;
+            /*display: flex;*/
+            align-items: flex-start;
+            justify-content: center;
+            overflow: auto;
+        }
+
+        .canvas-toolbar {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            margin-left:auto;
+            margin-right:auto;
+        }
+
+   
+
+
+        .app-badge-btn {
+            appearance: none;
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 30px;
+            padding: 5px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: black;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .app-badge-btn:hover {
+            background: var(--slate-50);
+            border-color: var(--indigo-300);
+            color: var(--indigo-600);
+            /*transform: translateY(-1px);*/
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .app-badge-btn:active {
+            filter: brightness(0.9);
+        }
+
+
+        /* State for when gridlines are active */
+        .app-badge-btn.active-state {
+            background: var(--indigo-50);
+            border-color: var(--indigo-200);
+            color: var(--indigo-700);
+        }
+
+        .btn-primary-sm {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+        }
+
+        .btn-primary-sm:hover {
+            background: #4f46e5;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.35);
+        }
+
+        
+        .btn-secondary-sm {
+            background: var(--slate-100);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+        }
+
+        .btn-secondary-sm:hover {
+            background: var(--slate-50);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.35);
+        }
+
+        
+        
+        
+        .canvas {
+            width: 100%;
+            max-width: 1200px;
+            height: 70%; 
+            background: white;
+            position: relative; 
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            margin: auto;
+            border-radius: 30px;
+        }
+
+        
+        #grid-visualizer {
+            /* CHANGE THIS from position: absolute to relative */
+            position: relative; 
+            width: calc(100% - 40px);
+            height: calc(100% - 40px);
+            left:20px;
+            top:20px;
+            display: grid;
+            align-content: stretch;
+            justify-content: stretch;
+            /* This ensures it respects the parent's padding */
+        }
+
+        .grid-overlay {
+            pointer-events: none;
+            z-index: 0;
+            position: absolute;
+            /* Use inset: 0 so it fills the padded area of the visualizer */
+            inset: 0; 
+            display: grid;
+        }
+        
+
+        .grid-cell-helper {
+            border: 1px dashed rgba(99, 102, 241, 0.15);
+        }
+        
+        .grid-item {
+            color: white;
+            font-weight: 700;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            touch-action: none; /* Prevents scrolling while dragging on mobile */
+            z-index: 1; /* Items sit above the dashed lines */
+        }
+
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            /* CRITICAL: prevents items from stretching the 'fixed' 40px tracks */
+            min-width: 0;
+            min-height: 0; 
+            border: 1px solid rgba(0,0,0,0.1);
+            font-size: 0.7rem;
+        }
+
+        /*
+        .grid-item:hover {
+            transform: scale(1.01);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        */
+        
+        .grid-item.selected {
+            ring: 4px solid var(--indigo-500); /* custom ring simulation */
+            outline: 4px solid var(--indigo-500);
+            outline-offset: 2px;
+            z-index: 2;
+        }
+
+        .grid-item-label {
+            pointer-events: none;
+            -webkit-user-select: none; /* Safari, Chrome */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer */
+            user-select: none;
+        }
+
+        .grid-item-label {
+            font-size: 0.65rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            max-width: 90%;
+        }
+
+        .grid-item-lines {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            font-size: 0.65rem;
+            opacity: 0.5;
+            font-family: monospace;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            display: none;
+            width: 100%;
+            background-color: var(--slate-900);
+            color: var(--slate-300);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            margin-top: 3rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.875rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            max-width: 1200px;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .code-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, #6366f1, #a855f7, #ec4899);
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .code-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            color: var(--slate-500);
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+
+        /* Base handle style */
+        .resize-handle {
+            position: absolute;
+            background: white;
+            border: 2px solid #3b82f6; /* Indigo/Blue to match your theme */
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            z-index: 100;
+            transition: transform 0.1s;
+        }
+
+        .resize-handle:hover {
+            /*transform: scale(1.5);*/
+            width: 15px;
+            height: 15px;
+            background: #3b82f6;
+            border: white;
+        }
+        
+
+        /* Positioning for all 8 handles */
+        .handle-n  { top: -5px; left: 50%; transform: translateX(-50%); cursor: ns-resize; }
+        .handle-s  { bottom: -5px; left: 50%; transform: translateX(-50%); cursor: ns-resize; }
+        .handle-e  { right: -5px; top: 50%; transform: translateY(-50%); cursor: ew-resize; }
+        .handle-w  { left: -5px; top: 50%; transform: translateY(-50%); cursor: ew-resize; }
+
+        .handle-nw { top: -5px; left: -5px; cursor: nwse-resize; }
+        .handle-ne { top: -5px; right: -5px; cursor: nesw-resize; }
+        .handle-sw { bottom: -5px; left: -5px; cursor: nesw-resize; }
+        .handle-se { bottom: -5px; right: -5px; cursor: nwse-resize; }
+
+        /* Visual feedback for the Active Layer in the sidebar */
+        .active-layer {
+            background: #f1f5f9 !important; /* slate-100 */
+            box-shadow: inset 2px 0 0 #6366f1; /* indigo-500 indicator */
+        }
+
+        
+        
+        
+        /* -- For Drag and dropping to rarrange and hilight the borders */
+        .track-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: #f8fafc;
+            border: 2px solid transparent; /* Placeholder for the highlight */
+            border-radius: 8px;
+            margin-bottom: 4px;
+            transition: all 0.2s ease;
+            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+        }
+
+        /* The "Slot" indicator when hovering during a drag */
+        .track-item.drop-target {
+            border-color: #6366f1;
+            background: #eff6ff;
+            transform: scale(1.02);
+        }
+
+        /* The item currently being dragged */
+        .track-item.dragging {
+            opacity: 0.4;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .drag-handle {
+            cursor: grab;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            padding: 4px;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .drag-handle:hover {
+            color: #64748b;
+        }
+        
+        .drag-handle {
+            cursor: grab !important; /* Force grab cursor on the handle */
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            padding: 8px 4px; /* Slightly larger hit area for the handle */
+            -webkit-user-select: none; /* Safari, Chrome */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer */
+            user-select: none;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing !important;
+        }
+
+        /* Ensure inputs and buttons behave normally now */
+        .track-input, .track-btn {
+            cursor: auto;
+            position: relative;
+            z-index: 2; /* Ensure they sit above any parent drag logic */
+        }
+
+        /* --- */ 
+        
+        
+        
+        
+        /* --- for slider resizer */
+        /* The Resizer Area */
+        .resizer {
+            position: absolute;
+            right: -5px; /* Sits on the border */
+            top: 0;
+            width: 10px;
+            height: 100%;
+            cursor: col-resize;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* The Visual Handle */
+        .resizer-handle {
+            width: 4px;
+            height: 40px;
+            background: var(--slate-300);
+            border-radius: 2px;
+            transition: background 0.2s;
+        }
+
+        .resizer:hover .resizer-handle {
+            background: var(--indigo-500);
+        }
+        /* --- */
+        
+        
+
+        /* Utils */
+        .hidden { display: none; }
+        
+        
+        
+        .btn-danger-sm {
+            background: #fff1f2;
+            color: #e11d48;
+            border: 1px solid #fecdd3;
+            padding: 0.4rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-danger-sm:hover {
+            background: #ffe4e6;
+            border-color: #fb7185;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        
+        
+        
+
+        .preset-section {
+            padding: 1rem;
+            border-bottom: 1px solid var(--slate-200);
+            max-height: 238px;
+            overflow-y: auto;
+            background: var(--slate-50);
+            border-radius:8px;
+        }
+
+        .section-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--slate-500);
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.025em;
+        }
+
+        .btn-group-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two columns */
+            gap: 0.5rem;
+        }
+
+        .btn-group-grid .btn-outline {
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border: 1px solid var(--slate-200);
+            background: white;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-group-grid .btn-outline:hover {
+            background: var(--slate-50);
+            border-color: var(--indigo-500);
+            color: var(--indigo-600);
+        }
+
+
+        
+        
+        .sidebar {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s auto;
+        }
+        
+        
+        
+        
+        /* Default state (White/Transparent) */
+        #app-btn-toggle-sidebar {
+            background: white;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        /* Active state (When Sidebar is visible) */
+        #app-btn-toggle-sidebar.active {
+            background-color: var(--indigo-50);
+            color: var(--indigo-600);
+            border-color: var(--indigo-200);
+        }
+
+        /* Hover state (Works perfectly because we aren't using inline styles) */
+        #app-btn-toggle-sidebar:hover {
+            background-color: var(--slate-100);
+        }
+
+        #app-btn-toggle-sidebar.active:hover {
+            background-color: var(--indigo-100);
+        }
+
+
+
+        
+        
+        
+        
+        
+        /* Container for the 4 buttons */
+        .preset-grid-compact {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+            gap: 4px; /* Tight spacing between buttons */
+            width: 100%;
+        }
+
+        /* Individual Button Styling */
+        .btn-preset {
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 10px;
+            padding: 16px 2px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--slate-400);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            white-space: nowrap; /* Prevents text from wrapping */
+        }
+
+        /* Interaction States */
+        .btn-preset:hover {
+            background-color: var(--indigo-50);
+            border-color: var(--indigo-200);
+            color: var(--indigo-600);
+        }
+
+        .btn-preset:active {
+            background-color: var(--indigo-100);
+            transform: translateY(1px);
+        }
+
+
+        
+        
+        .sidebar-title {
+            text-align: right; padding: 5px; position: relative; z-index: 1002; cursor: pointer;
+            width: 40px;
+            left: calc(100% - 40px);
+        }
+        
+        .sidebar-title span {
+            font-weight: 700; font-size:1.6rem; margin-right: 10px; font-family: sans-serif;
+            -webkit-user-select: none; /* Safari, Chrome */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer */
+            user-select: none;
+            color:var(--indigo-600);
+        }
+        
+        
+        
+        
+
+        .header-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 6px 8px;
+            border-radius: 6px;
+            color: var(--slate-500);
+            font-size: 0.725rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .header-action-btn:hover {
+            background: var(--slate-100);
+            color: var(--slate-900);
+            border-color: var(--slate-200);
+        }
+
+        .header-action-btn:active {
+            background: var(--slate-200);
+        }
+
+
+        /* Specific Hover state for the Reset button */
+        .header-action-btn[title="Reset All"]:hover {
+            background-color: var(--red-50); /* Light red background */
+            color: var(--red-600);           /* Red text/icon */
+            border-color: #fecaca;          /* Subtle red border (tailwinds red-200) */
+        }
+
+        
+
+        
+        
+
+        /* Modal Overlay with Blur */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.4); /* Slate-900 with transparency */
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.2s ease;
+        }
+
+        /* Modal Window Styling */
+        .modal-window {
+            background: white;
+            width: 90%;
+            max-width: 700px;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--slate-200);
+            overflow: hidden;
+            animation: modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Header */
+        .modal-header {
+            padding: 1rem 1.25rem;
+            background: var(--slate-50);
+            border-bottom: 1px solid var(--slate-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--slate-900);
+        }
+
+        .modal-close-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--slate-400);
+            cursor: pointer;
+            line-height: 1;
+            padding: 0.25rem;
+        }
+
+        .modal-close-btn:hover {
+            color: var(--red-600);
+        }
+
+        /* Body */
+        .app-modal-body {
+            padding: 1.5rem;
+            font-size: 0.9rem;
+            color: black;
+            line-height: 1.5;
+        }
+
+        .app-modal-body h3 {
+            color: var(--slate-900);
+            margin-bottom: 0.75rem;
+        }
+
+        /* Footer */
+        .modal-footer {
+            padding: 1rem 1.25rem;
+            background: var(--slate-50);
+            border-top: 1px solid var(--slate-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .help-shortcut-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--slate-100);
+        }
+        
+        
+        
+        
+
+        /* The Mask */
+        /* The Spotlight Hole */
+        #tutorial-spotlight {
+            position: fixed;
+            z-index: 10000;
+            pointer-events: none;
+            border-radius: 8px;
+            /* This creates the dark overlay */
+            box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.75); 
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        /* The Tooltip - Attached to the spotlight */
+        #tutorial-tooltip {
+            position: absolute;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 280px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            pointer-events: auto;
+            transition: all 0.3s ease; /* Smooth move between steps */
+            max-width: calc(100vw - 40px);
+		color:black;
+        }
+
+        /* Safety: If the spotlight is too low on screen, flip the tooltip to the top */
+        .tooltip-top #tutorial-tooltip {
+            top: auto;
+            bottom: calc(100% + 20px);
+        }
+
+
+
+
+        
+
+
+        .input-unit-wrapper {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 4px;
+            padding: 2px 4px;
+            border: 1px solid var(--slate-200);
+        }
+
+        .input-unit-wrapper input {
+            background: white;
+            border: none;
+            width: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--slate-900);
+            text-align: right;
+            outline: none;
+            -moz-appearance: textfield;
+        }
+
+        /* Hide spin arrows */
+        .input-unit-wrapper input::-webkit-outer-spin-button,
+        .input-unit-wrapper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .input-unit-wrapper span {
+            font-size: 0.65rem;
+            color: black;
+            margin-left: 2px;
+        }
+
+        /* Disabled State */
+        .disabled-control {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        
+        
+        
+
+        #demo-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            z-index: 20000;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .demo-hidden {
+            display: none !important;
+        }
+
+        .demo-back-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 20001;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: var(--indigo-600);
+            color: white;
+            border: 1px solid white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 0.8rem;
+        }
+        
+        .demo-download-btn {
+            position: fixed;
+            top: 20px;
+            right: 165px;
+            z-index: 20001;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: var(--slate-100);
+            color: var(--indigo-600);
+            border: 1px solid var(--indigo-600);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 0.8rem;
+        }
+        
+        #demo-grid-container {
+            display: grid;
+            width: 100%;
+            height: 100%;
+            /* These will be populated by JS */
+        }
+
+        .demo-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            font-family: sans-serif;
+        }
+
+        
+        
+        
+
+        .code-preview {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: var(--slate-700);
+            height: 250px;
+            overflow: auto;
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        /* Style for the filename input to match your theme */
+        #export-filename {
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 8px;
+            width: 100%;
+            color: var(--slate-700);
+            font-weight: 600;
+        }
+
+
+
+        
+        
+        .mode-toggle-container {
+            display: flex;
+            position: relative;
+            background-color: var(--slate-100, #f1f5f9);
+            padding: 2px;
+            border-radius: 8px;
+            border: 1px solid var(--slate-200, #e2e8f0);
+            width: 120px; /* Fixed width for the toggle */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            
+            display: none !important;
+        }
+
+        .mode-toggle-container input {
+            display: none; /* Hide the actual radio buttons */
+        }
+
+        .mode-toggle-container label {
+            flex: 1;
+            z-index: 2;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 4px 0;
+            color: var(--slate-500, #64748b);
+            transition: color 0.2s ease;
+        }
+
+        .mode-toggle-container input:checked + label {
+            color: var(--indigo-600, #4f46e5);
+        }
+
+        .slider-glider {
+            position: absolute;
+            height: calc(100% - 4px);
+            width: calc(50% - 4px);
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 6px;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        /* Logic for sliding the glider */
+        #mode-grid:checked ~ .slider-glider {
+            transform: translateX(0);
+        }
+
+        #mode-flex:checked ~ .slider-glider {
+            transform: translateX(100%);
+        }
+        
+        
+        
+        
+        
+        
+        .logoPart1{
+            color: var(--indigo-600);
+        }
+        
+        
+        .logoPart2 {
+            color: var(--slate-400);
+        }
+        
+        
+        /* 1. Base Styles for Logo Spans */
+        .logoPart1, .logoPart2 {
+            transition: color 0.3s ease; /* Makes the color swap smooth */
+        }
+
+        /* 2. Logic for Logo Colors based on Selection */
+
+        /* When GRID is checked */
+        :has(#mode-grid:checked) .logoPart1 { color: var(--indigo-600); }
+        :has(#mode-grid:checked) .logoPart2 { color: var(--slate-400); }
+
+        /* When FLEX is checked */
+        :has(#mode-flex:checked) .logoPart1 { color: var(--slate-400); }
+        :has(#mode-flex:checked) .logoPart2 { color: var(--indigo-600); }
+
+
+        /* --- Your existing Toggle Styles (for context) --- */
+        .mode-toggle-container {
+            display: flex;
+            position: relative;
+            background-color: var(--slate-100);
+            padding: 2px;
+            border-radius: 8px;
+            border: 1px solid var(--slate-200);
+            width: 120px;
+        }
+
+        .mode-toggle-container input { display: none; }
+
+        .mode-toggle-container label {
+            flex: 1;
+            z-index: 2;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 4px 0;
+            color: var(--slate-500);
+            transition: color 0.3s ease;
+        }
+
+        .mode-toggle-container input:checked + label {
+            color: var(--indigo-600);
+        }
+
+        .slider-glider {
+            position: absolute;
+            height: calc(100% - 4px);
+            width: calc(50% - 4px);
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 6px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        #mode-grid:checked ~ .slider-glider { transform: translateX(0); }
+        #mode-flex:checked ~ .slider-glider { transform: translateX(100%); }
+
+
+
+
+        @keyframes highlightFlash {
+            0% {
+                box-shadow: 0 0 0 0px rgba(79, 70, 229, 0);
+                border-color: transparent;
+            }
+            30% {
+                /* Indigo glow to match your brand */
+                box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.4);
+                border-color: var(--indigo-600);
+            }
+            100% {
+                box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
+                border-color: inherit;
+            }
+        }
+
+        .highlight-flash {
+            /* Ensure the section has a border property for the animation to work smoothly */
+            border: 1px solid transparent; 
+            border-radius: 8px; /* Match your UI rounding */
+            animation: highlightFlash 1.5s ease-out;
+        }
+
+
+
+        .versionString {
+            font-size: 0.65rem; color: var(--slate-400); font-weight: 600; position: absolute; top: 43px; left: 148px;
+        }
+        
+        
+        
+        
+        .help-list{
+            padding:10px 10px 10px 20px;
+        }
+        
+        
+
+
+        /* Styling for keyboard keys in help modal */
+        .help-kbd {
+            display: inline-block;
+            padding: 2px 6px;
+            font-family: inherit;
+            font-size: 0.75rem;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--slate-700);
+            background-color: var(--slate-100);
+            border: 1px solid var(--slate-300);
+            border-bottom-width: 3px;
+            border-radius: 4px;
+            margin-right: 4px;
+        }
+
+        .help-list-li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-list-li-span {
+            font-size: 0.9rem;
+        }
+
+        
+        
+        
+        
+        
+    /* MOBILE VIEW: Slide-up Drawer */
+    @media (max-width: 768px) {
+        .btn-group-grid {
+            grid-template-columns: 1fr; /* Single column on very small screens */
+        }
+
+        .versionString {
+            font-size: 0.65rem; color: var(--slate-400); font-weight: 600; position: absolute; top: 43px; left: 92px;
+        }
+        
+        
+        .canvas{
+            height: 60%;
+        }
+        
+        .sidebar {
+            width: 100% !important; /* Force full width */
+            height: 40vh; /* Default mobile height */
+            min-height: 100px;
+            max-height: 90vh;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            border-right: none;
+            border-top: 1px solid var(--slate-200);
+            box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .resizer {
+            right: 0;
+            top: -15px; /* Position at the top edge */
+            width: 100%;
+            height: 30px;
+            cursor: row-resize;
+        }
+
+      .resizer-handle {
+        width: 60px;
+        height: 5px;
+        margin-top: -28px;
+        margin-left: 35px;
+      }
+
+        .main-preview{
+            padding:0px 20px 20px 20px;
+        }
+        
+        .canvas-toolbar-btn-text{
+            display: none;
+        }
+        
+        
+        .preset-section {
+            max-height: 310px;
+            width: 90%;
+            left: 5%;
+            position: relative;
+        }
+        
+        
+        #layers-list{
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+
+        .header-action-btn span {
+            display: none;
+        }
+        
+        .header-action-btn {
+            padding: 6px;
+        }
+        
+    }
+        
+        
+        
+
+        .track-btn-sm {
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 4px;
+            border: 1px solid var(--slate-200);
+            background: white;
+            color: var(--slate-600);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .track-btn-sm:hover {
+            background: var(--slate-50);
+            color: var(--indigo-600);
+            border-color: var(--indigo-200);
+        }
+
+
+        
+
+    /* MOBILE VIEW: Slide-up Drawer Logic */
+    @media (max-width: 768px) {
+        .sidebar {
+            /* Reset desktop width */
+            width: 100% !important; 
+            max-width: none;
+            min-width: 0;
+
+            /* Set initial mobile height */
+            height: 50vh; 
+            min-height: 150px;
+            max-height: 90vh;
+
+            /* Position at the bottom */
+            position: fixed;
+            bottom: 0;
+            left: 0;
+
+            /* Aesthetics for a "Drawer" look */
+            border-right: none;
+            border-top: 1px solid var(--slate-200);
+            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 20px 20px 0 0;
+
+            /* Ensure it's above the canvas */
+            z-index: 2000;
+        }
+        
+        .preset-grid-compact {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+    }
+
+    /* The Resizer Styling */
+    #sidebar-resizer {
+      position: absolute;
+      z-index: 1001;
+      background: transparent;
+      transition: background 0.2s;
+    }
+
+    /* Desktop Handle (Right Side) */
+    @media (min-width: 769px) {
+        #sidebar-resizer {
+            top: 0;
+            right: 0;
+            width: 6px;
+            height: 100%;
+            cursor: col-resize;
+        }
+        #sidebar-resizer:hover {
+            background: var(--indigo-100);
+            border-right: 2px solid var(--indigo-500);
+        }
+        
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+            margin-right: -380px; /* Adjust based on your default width to reclaim space */
+        } 
+    }
+
+    /* Mobile Handle (Top Side) */
+    @media (max-width: 768px) {
+        #sidebar-resizer {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 30px; /* Bigger touch target */
+            cursor: row-resize;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* The visible "pill" handle for mobile */
+        #sidebar-resizer::after {
+            content: '';
+            width: 40px;
+            height: 4px;
+        }
+        
+        .sidebar.collapsed {
+            transform: translateY(100%) !important;
+            box-shadow: none;
+        }
+
+        /* Optional: Hide text on small buttons for mobile to save space */
+        .mobile-hide {
+            display: none;
+        }
+    }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="main-sidebar">
+
+        <div id="id-sidebar-close-btn" class="sidebar-title" onclick="toggleSidebar()">
+            <span>x</span>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" id="tab-grid">Grid</button>
+            <button class="tab" id="tab-item">Block Styles</button>
+        </div>
+
+        <div id="id-sidebar-content" class="sidebar-content">
+            <!-- Grid Tab Content -->
+            <div id="content-grid">
+                <section id="id-sidebar-quick-presets" >
+                    <label class="section-title" id="id-sidebar-quick-presets-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
+                        Presets
+                    </label>
+                    <div class="preset-section">
+                        <div class="btn-group-grid">
+                            <!-- Original -->
+                            <button class="btn-outline" onclick="applyPreset('holy-grail')">Holy Grail</button>
+                            <button class="btn-outline" onclick="applyPreset('dashboard')">Dashboard</button>
+
+                            <!-- New Templates -->
+                            <button class="btn-outline" onclick="applyPreset('bento-grid')">Bento Grid</button>
+                            <button class="btn-outline" onclick="applyPreset('ecommerce')">E-Commerce</button>
+
+                            <button class="btn-outline" onclick="applyPreset('admin-grid')">Admin</button>
+
+                            <button class="btn-outline" onclick="applyPreset('gallery-split')">Gallery</button>
+                            <button class="btn-outline" onclick="applyPreset('portfolio-header')">Portfolio</button>
+
+                            <button class="btn-outline" onclick="applyPreset('mobile-app')">Mobile App</button>
+                            <button class="btn-outline" onclick="applyPreset('sticky-social')">Social Feed</button>
+                        </div>
+                    </div>
+                </section>
+
+                
+                <div class="slider-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <label class="section-title" style="margin: 0;">Spacing</label>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.7rem; color: var(--slate-500); cursor: pointer; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;">
+                                <input type="checkbox" id="sync-gaps" style="accent-color: var(--indigo-600);" checked> Sync
+                            </label>
+                            <button class="btn-icon-del" onclick="resetGaps()" title="Reset Spacing" style="color: var(--slate-400); padding: 2px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="slider-header">
+                        <label style="-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;">Column Gap</label>
+                        <div class="input-unit-wrapper">
+                            <input type="number" id="col-gap-num" value="0" min="0" max="100">
+                            <span>px</span>
+                        </div>
+                    </div>
+                    <input type="range" id="col-gap" min="0" max="100" value="0">
+
+                    <div class="slider-header" style="margin-top: 1rem;">
+                        <label style="-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;">Row Gap</label>
+                        <div class="input-unit-wrapper" id="row-input-container">
+                            <input type="number" id="row-gap-num" value="0" min="0" max="100">
+                            <span>px</span>
+                        </div>
+                    </div>
+                    <input type="range" id="row-gap" min="0" max="100" value="0">
+                </div>
+                
+                
+                <button id="reset-canvas-btn" class="btn-danger" onclick="openResetGridModal()" style="margin-bottom:30px; margin-top:30px;">
+                    Reset Grid
+                </button>
+                
+                <section id="id-sidebar-grid-cols">
+                    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label class="section-title" style="margin-bottom: 0;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg>
+                                Columns
+                            </label>
+                            &nbsp;&nbsp;&nbsp;
+                            <button class="track-btn-sm" onclick="setAllTracks('col', '1fr')">1fr</button>
+                            <button class="track-btn-sm" onclick="setAllTracks('col', 'auto')">Auto</button>
+                        </div>
+
+                        <button class="btn-icon-del" style="color:var(--indigo-600)" onclick="addColumn()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="track-list" id="columns-list">
+                        </div>
+                </section>
+
+                <section id="id-sidebar-grid-rows">
+                    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label class="section-title" style="margin-bottom: 0;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 12h18"/></svg>
+                                Rows
+                            </label>
+                            &nbsp;&nbsp;&nbsp;
+                            <button class="track-btn-sm" onclick="setAllTracks('row', '1fr')">1fr</button>
+                            <button class="track-btn-sm" onclick="setAllTracks('row', 'auto')">Auto</button>
+                        </div>
+
+                        <button class="btn-icon-del" style="color:var(--indigo-600)" onclick="addRow()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="track-list" id="rows-list">
+                        </div>
+                </section>
+
+            </div>
+
+            <!-- Item Tab Content -->
+            <div id="content-item" class="hidden">
+                <div >
+                    <section>
+                        <label class="section-title">Display Name</label>
+                        <input type="text" id="item-name" class="track-input" style="background: var(--slate-50); border: 1px solid var(--slate-200); padding: 0.5rem; text-align: left; border-radius: 0.5rem;">
+                        <button class="btn-danger" onclick="validateDeleteSingle()">
+                            Delete Block
+                        </button>
+                    </section>
+
+                    <section>
+                        <label class="section-title">Column Placement</label>
+                        <div class="placement-grid">
+                            <div class="placement-control">
+                                <span style="-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;">Start Line</span>
+                                <div class="stepper">
+                                    <button onclick="adjustPlacement('colStart', -1)">-</button>
+                                    <div class="value" id="item-col-start">1</div>
+                                    <button onclick="adjustPlacement('colStart', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="placement-control">
+                                <span style="-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;">End Line</span>
+                                <div class="stepper">
+                                    <button onclick="adjustPlacement('colEnd', -1)">-</button>
+                                    <div class="value" id="item-col-end">2</div>
+                                    <button onclick="adjustPlacement('colEnd', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <label class="section-title">Row Placement</label>
+                        <div class="placement-grid">
+                            <div class="placement-control">
+                                <span style="-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;">Start Line</span>
+                                <div class="stepper">
+                                    <button onclick="adjustPlacement('rowStart', -1)">-</button>
+                                    <div class="value" id="item-row-start">1</div>
+                                    <button onclick="adjustPlacement('rowStart', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="placement-control">
+                                <span style="-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;">End Line</span>
+                                <div class="stepper">
+                                    <button onclick="adjustPlacement('rowEnd', -1)">-</button>
+                                    <div class="value" id="item-row-end">2</div>
+                                    <button onclick="adjustPlacement('rowEnd', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <label class="section-title">Color Theme</label>
+                        <div class="color-palette" id="color-palette">
+                            <!-- JS injected -->
+                        </div>
+                    </section>
+                </div>
+                
+                <button id="reset-canvas-btn" class="btn-danger" onclick="validateDeleteAll()" style="margin-bottom:30px; margin-top:30px;">
+                    Delete All Blocks
+                </button>
+                
+                <section>
+                    <label class="section-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                        Layers (Blocks)
+                    </label>
+                    <div id="layers-list" class="track-list">
+                        </div>
+                </section>
+            </div>
+        </div>
+
+        <div id="id-sidebar-add-block-btn" style="padding: 1rem; background: var(--slate-50); border-top: 1px solid var(--slate-200);">
+            <button class="btn-primary" onclick="addNewItem()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                Add Block
+            </button>
+        </div>
+        
+        <div id="sidebar-resizer" class="resizer">
+            <div class="resizer-handle"></div>
+        </div>
+    </aside>
+
+
+    
+    <main class="main-preview">
+        
+        <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 1rem 0rem; margin-bottom: 5px;">
+
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <button class="badge app-badge-btn active" id="app-btn-toggle-sidebar" onclick="toggleSidebar()" title="Toggle Sidebar">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                        <span class="mobile-hide">Menu</span>
+                    </button>
+
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--indigo-600);">
+                            <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>
+                        </svg>
+                        <h1 style="font-size: 1.1rem; color: var(--indigo-600); display: inline-flex; align-items: baseline; gap: 0.25rem; font-weight: 700; margin: 0;">
+                            <span class="logoPart1">Grid</span><span class="logoPart2">Flex</span>
+                            <span class="versionString">&nbsp; 1.0.0.15</span>
+                        </h1>
+                    </div>
+                </div>
+
+                <div class="mode-toggle-container">
+                    <input type="radio" id="mode-grid" name="layout-mode" value="grid" checked>
+                    <label for="mode-grid">Grid</label>
+
+                    <input type="radio" id="mode-flex" name="layout-mode" value="flex">
+                    <label for="mode-flex">Flex</label>
+
+                    <div class="slider-glider"></div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 4px;">
+                <button id="id-title-help-btn" class="header-action-btn" onclick="openHelp()" title="Help">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <span>Help</span>
+                </button>
+                <button id="id-title-demo-btn" class="header-action-btn" onclick="toggleDemoMode()" title="Start Demo">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <span>Demo</span>
+                </button>
+                <button id="id-title-export-btn" class="header-action-btn" onclick="openExport()" title="Export Code">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                    <span>Export</span>
+                </button>
+                <button id="id-title-reset-btn"  class="header-action-btn" onclick="openResetModal()" title="Reset All">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    <span>Reset</span>
+                </button>
+            </div>
+
+        </div>
+        
+        <div id="id-canvas-toolbar" class="canvas-toolbar" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+
+                <div style="display: flex; gap: 0.25rem;">
+                    <button class="badge app-badge-btn" id="badge-cols" onclick="addColumn(); switchTab('grid');" title="Add Column">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg>
+                        <span id="col-count-text">3 Cols</span>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-left: 4px; opacity: 0.6;"><path d="M12 5v14M5 12h14"/></svg>
+                    </button>
+
+                    <button class="badge app-badge-btn" id="badge-rows" onclick="addRow(); switchTab('grid');" title="Add Row">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 12h18"/></svg>
+                        <span id="row-count-text">2 Rows</span>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-left: 4px; opacity: 0.6;"><path d="M12 5v14M5 12h14"/></svg>
+                    </button>
+                </div>
+
+                <div style="display: flex; gap: 0.4rem;">
+                    <button class="btn-primary-sm" onclick="addNewItem()" style="display: flex; align-items: center; gap: 6px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                        <span class="canvas-toolbar-btn-text">Block</span>
+                    </button>
+
+                    <button class="btn-danger-sm hidden" id="btn-delete-selected" onclick="deleteCurrentItem()" title="Delete Selected Block" style="display: flex; align-items: center; gap: 6px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        <span class="canvas-toolbar-btn-text">Delete Block</span>
+                    </button>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.25rem;">
+                <button class="badge app-badge-btn" id="btn-toggle-grid" onclick="toggleGrid()" title="Toggle Gridlines">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+                    <span>Grid</span>
+                </button>
+            </div>
+        </div>
+
+        
+        <div id="id-canvas" class="canvas">
+            <div class="grid-visualizer" id="grid-visualizer">
+                <!-- Items injected here -->
+            </div>
+        </div>
+
+        <!--
+        <div style="font-size: 0.65rem; color: var(--slate-400); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; margin-top: 30px;">
+            Click items to select
+        </div>
+        -->
+
+        <div id="id-canvas-quick-presets" style="margin-top: 30px; max-width: 1200px; margin-left: auto; margin-right: auto;">
+            <label class="section-title" style="font-size: 0.65rem; color: var(--slate-400); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block;">
+                Quick Presets
+            </label>
+            <div class="preset-grid-compact">
+                <button class="btn-preset" onclick="applyPreset('holy-grail')">Holy Grail</button>
+                <button class="btn-preset" onclick="applyPreset('admin-grid')">Admin</button>
+                <button class="btn-preset" onclick="applyPreset('bento-grid')">Bento</button>
+                <button class="btn-preset" onclick="showMorePresets()">More...</button>
+            </div>
+        </div>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <div class="code-title">Generated CSS Grid</div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: #ef444433;"></div>
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b33;"></div>
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: #10b98133;"></div>
+                </div>
+            </div>
+            <pre id="code-output"></pre>
+        </div>
+    </main>
+
+
+    
+    <div id="reset-modal" class="modal-overlay hidden">
+        <div class="modal-window" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                    </svg>
+                    <span class="modal-title" style="color: #ef4444;">Cleanup Options</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeResetModal()">&times;</button>
+            </div>
+
+            <div class="app-modal-body">
+                <p>Choose which parts of your project you would like to clear. This action cannot be undone.</p>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+
+                    <button class="btn-outline" onclick="performReset('blocks')" style="justify-content: flex-start; padding: 12px;">
+                        <strong>Clear All Blocks</strong>
+                        <span style="font-size: 0.75rem; display: block; opacity: 0.7;">Keep grid structure, delete all content.</span>
+                    </button>
+
+                    <button class="btn-outline" onclick="performReset('grid')" style="justify-content: flex-start; padding: 12px;">
+                        <strong>Reset Grid Layout</strong>
+                        <span style="font-size: 0.75rem; display: block; opacity: 0.7;">Keep blocks, reset columns/rows to default.</span>
+                    </button>
+
+                    <button class="btn-preset" onclick="performReset('both')" style="background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; justify-content: flex-start; padding: 12px; text-align: left;">
+                        <strong>Reset Everything</strong>
+                        <span style="font-size: 0.75rem; display: block; opacity: 0.8;">Wipe blocks and grid back to scratch.</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="margin-top: 10px;">
+                <button class="btn-preset" onclick="closeResetModal()" style="padding:10px 20px; width: 100%;">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    <div id="delete-blocks-modal" class="modal-overlay hidden">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    <span class="modal-title" style="color: #ef4444;">Clear All Content?</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+            </div>
+            <div class="app-modal-body">
+                <p>Are you sure you want to delete all blocks? Your <strong>Grid Layout</strong> settings will remain safe.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-preset" onclick="closeAllModals()" style="padding:10px 20px;">Keep Blocks</button>
+                <button class="btn-preset" onclick="performReset('blocks'); closeAllModals();" style="background: #ef4444; color: white; border: none; border-radius: 6px; font-weight: 600; padding:10px 20px;">Delete All Blocks</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="reset-grid-modal" class="modal-overlay hidden">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line>
+                    </svg>
+                    <span class="modal-title" style="color: #6366f1;">Reset Layout?</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+            </div>
+            <div class="app-modal-body">
+                <p>This will reset columns and rows to default. Your <strong>Items/Blocks</strong> will be preserved but may shift positions.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-preset" onclick="closeAllModals()" style="padding:10px 20px;">Keep Layout</button>
+                <button class="btn-preset" onclick="performReset('grid'); closeAllModals();" style="background: #ef4444; color: white; border: none; border-radius: 6px; font-weight: 600; padding:10px 20px;">Reset Grid</button>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div id="delete-single-block-modal" class="modal-overlay hidden">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    <span class="modal-title" style="color: #ef4444;">Delete Selected Block?</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+            </div>
+            <div class="app-modal-body">
+                <p>Are you sure you want to remove this block? This cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-preset" onclick="closeAllModals()" style="padding:10px 20px;">Cancel</button>
+                <button class="btn-preset" onclick="deleteCurrentItem(); closeAllModals();" style="background: #ef4444; color: white; border: none; border-radius: 6px; font-weight: 600; padding:10px 20px;">Confirm Delete</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="preset-confirm-modal" class="modal-overlay hidden">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <span class="modal-title" style="color: #f59e0b;">Overwrite Canvas?</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+            </div>
+            <div class="app-modal-body">
+                <p>You have unsaved changes on your canvas. Applying this preset will <strong>delete everything</strong> currently visible.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-preset" onclick="closeAllModals()" style="padding:10px 20px;">Keep My Work</button>
+                <button id="confirm-preset-btn" class="btn-preset" style="background: #f59e0b; color: white; border: none; padding:10px 20px;">Overwrite Everything</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="alert-modal" class="modal-overlay hidden">
+        <div class="modal-window" style="max-width: 400px;">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span class="modal-title">Notice</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+            </div>
+            <div class="app-modal-body">
+                <p id="alert-modal-message" style="text-align: center; padding: 10px 0;"></p>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="btn-preset" onclick="closeAllModals()" style="padding:10px 40px; background: var(--indigo-600); color: white; border: none;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="help-modal" class="modal-overlay hidden">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--indigo-600);">
+                        <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <span class="modal-title">GridFlex Help Guide</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeHelp()">&times;</button>
+            </div>
+
+            <div class="app-modal-body">
+                <h3>Mastering the Grid</h3>
+                <p>GridFlex is a visual layout designer for CSS Grid, where you export layouts to use in other projects</p>
+                <br>
+                <div class="help-section">
+                    <strong>Canvas vs. Demo Mode</strong>
+                    <p>
+                        The <b>Canvas</b> is scaled down for speed and visibility while you build.
+                        Switch to <b>Demo Mode</b> for a 1:1 preview to see your layout exactly as it will appear in the real world before you export.
+                    </p>
+                </div>
+                <Br/>
+                
+                <div class="help-section">
+                    <h3>The Basics</h3>
+                    <ul class="help-list">
+                        <li><b>Quick Buttons:</b> Use canvas shortcuts for rapid row/column adjustments and adding blocks.</li>
+                        <li><b>Click & Drag:</b> Move and resize blocks to design your layout</li>
+                        <li><b>Property Menu:</b> Click the <b>Menu</b> <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg> icon (top-left) for deeper control over colors, naming, and sizing.</li>
+                        <li><b>Presets:</b> Don't start from scratch! Choose a common layout from the presets library.</li>
+                    </ul>
+                </div>
+                <br/>
+                
+                <div class="help-section">
+                    <h3>Keyboard Shortcuts</h3>
+                    <p style="font-size: 0.85rem; color: var(--slate-500); margin-bottom: 10px;">Select a block to use these controls:</p>
+                    <ul class="help-list">
+                        <li class="help-list-li">
+                            <kbd class="help-kbd">Del</kbd>
+                            <span class="help-list-li-span">Delete the selected block.</span>
+                        </li>
+                        <li class="help-list-li">
+                            <kbd class="help-kbd">↑</kbd> <kbd class="help-kbd">↓</kbd> <kbd class="help-kbd">←</kbd> <kbd class="help-kbd">→</kbd>
+                            <span class="help-list-li-span">Move the selected block around the grid.</span>
+                        </li>
+                        <li class="help-list-li">
+                            <kbd class="help-kbd">Shift</kbd> + <kbd class="help-kbd">Arrows</kbd>
+                            <span class="help-list-li-span">Resize the block (expand/contract edges).</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-preset" onclick="closeHelp()" style="padding:10px 20px;">Close</button>
+                <button class="btn-primary-sm" onclick="startTutorial()">Tutorial</button>
+            </div>
+        </div>
+    </div>
+
+        
+    <div id="tutorial-spotlight" class="tutorial-mask hidden" >
+        <div id="tutorial-tooltip" class="tutorial-tooltip">
+            <p id="tutorial-text"></p>
+            <div class="tutorial-actions" style="margin-top:10px;">
+                <button onclick="exitTutorial()" class="btn-preset" style="padding:8px 16px;">Exit</button>
+                <button id="tutorial-next-btn" onclick="nextStep()" class="btn-preset" style="padding:8px 16px; background:var(--indigo-600); color: white; border:1px solid var(--indigo-600)">Next</button>
+            </div>
+        </div>
+    </div>
+
+        
+        
+    <div id="demo-overlay" class="demo-hidden">
+        
+        <button class="demo-download-btn" onclick="directDownloadDemoHTML()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Download
+        </button>
+        
+        <button class="demo-back-btn" onclick="toggleDemoMode()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+            Exit Preview
+        </button>
+        <div id="demo-grid-container"></div>
+    </div>
+
+
+    <div id="export-modal" class="modal-overlay hidden">
+        <div class="modal-window" style="max-width: 800px; width: 90%;">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    <span class="modal-title">Export Production Code</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeExport()">&times;</button>
+            </div>
+
+            <div class="app-modal-body">
+                <div style="margin-bottom: 1.5rem;">
+                    <label class="section-title" style="display: block; margin-bottom: 0.5rem;">Filename</label>
+                    <div class="input-unit-wrapper" style="width: 100%; max-width: 300px;">
+                        <input type="text" id="export-filename" placeholder="my-layout" value="gridflex-layout">
+                        <span style="color: var(--slate-400); font-size: 0.8rem; padding-right: 10px;">.html</span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <label class="section-title">HTML Structure</label>
+                        <pre id="html-preview" class="code-preview"></pre>
+                        <button class="btn-preset" style="width: 100%; margin-top: 8px;" onclick="copyToClipboard('html')">Copy HTML</button>
+                    </div>
+                    <div>
+                        <label class="section-title">CSS Styles</label>
+                        <pre id="css-preview" class="code-preview"></pre>
+                        <button class="btn-preset" style="width: 100%; margin-top: 8px;" onclick="copyToClipboard('css')">Copy CSS</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-preset" onclick="closeExport()" style="padding:10px 20px;">Cancel</button>
+                
+                <button class="btn-preset" onclick="downloadDemoHTML()" style="padding:10px 20px; border: 1px solid var(--indigo-600); color: var(--indigo-600);">
+                    Download Demo.html
+                </button>
+                
+                <button class="btn-primary-sm" onclick="downloadExport()" style="padding:10px 20px;">Download Files (.zip)</button>
+            </div>
+        </div>
+    </div>
+        
+        
+    <script>
+        // --- State Management ---
+        let columns = ['1fr', '1fr', '1fr'];
+        let rows = ['1fr', '1fr'];
+        let colGap = 0;
+        let rowGap = 0;
+
+        let items = [];
+        let selectedItemId = null;
+        let activeTab = 'grid';
+        
+        // --- New State for Dragging ---
+        let isDragging = false;
+        let isResizing = false;
+        let resizeHandle = null;
+        let startX, startY, initialItemState;
+        
+        
+        const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#64748b'];
+
+        // --- Selectors ---
+        const gridVisualizer = document.getElementById('grid-visualizer');
+        const codeOutput = document.getElementById('code-output');
+        const columnsList = document.getElementById('columns-list');
+        const rowsList = document.getElementById('rows-list');
+        const colorPalette = document.getElementById('color-palette');
+        const tabGrid = document.getElementById('tab-grid');
+        const tabItem = document.getElementById('tab-item');
+        const contentGrid = document.getElementById('content-grid');
+        const contentItem = document.getElementById('content-item');
+
+        
+        // --- Core Logic ---
+        function render() {
+            gridVisualizer.innerHTML = '';
+
+            // --- Proportional Calculation ---
+            // We convert literal measures (px, em, %) into relative 'fr' 
+            const visualCols = getRelativeTracks(columns);
+            const visualRows = getRelativeTracks(rows);
+
+            gridVisualizer.style.gridTemplateColumns = visualCols.join(' ');
+            gridVisualizer.style.gridTemplateRows = visualRows.join(' ');
+            gridVisualizer.style.columnGap = `${colGap}px`;
+            gridVisualizer.style.rowGap = `${rowGap}px`;
+
+            // 1. Draw Background Grid Lines
+            drawGridLines(visualCols, visualRows);
+
+            // 2. Render Interactive Items
+            items.forEach(item => {
+                const isSelected = selectedItemId === item.id;
+                const el = document.createElement('div');
+
+                el.className = `grid-item ${isSelected ? 'selected' : ''}`;
+                el.style.backgroundColor = item.bg;
+                el.style.gridColumn = `${item.colStart} / ${item.colEnd}`;
+                el.style.gridRow = `${item.rowStart} / ${item.rowEnd}`;
+                el.style.zIndex = isSelected ? '10' : '1'; 
+
+                el.innerHTML = `
+                    <div class="grid-item-lines">${item.colStart}/${item.colEnd} • ${item.rowStart}/${item.rowEnd}</div>
+                    <div class="grid-item-label">${item.name}</div>
+                `;
+
+                if (isSelected) {
+                    const handles = ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'];
+                    handles.forEach(h => {
+                        const handle = document.createElement('div');
+                        handle.className = `resize-handle handle-${h}`;
+                        handle.onpointerdown = (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            startResize(e, item, h);
+                        };
+                        el.appendChild(handle);
+                    });
+                }
+
+                el.onpointerdown = (e) => {
+                    if (e.target.classList.contains('resize-handle')) return;
+                    startDrag(e, item);
+                };
+
+                gridVisualizer.appendChild(el);
+            });
+
+            // --- Toolbar & Badge Updates ---
+
+            // Update Column Badge Text
+            const colText = document.getElementById('col-count-text');
+            if (colText) colText.innerText = `${columns.length} Cols`;
+
+            // Update Row Badge Text
+            const rowText = document.getElementById('row-count-text');
+            if (rowText) rowText.innerText = `${rows.length} Rows`;
+
+            // Update colors of icons
+            const badgeCols = document.getElementById('badge-cols');
+            const badgeRows = document.getElementById('badge-rows');
+            if (badgeCols) badgeCols.style.color = 'var(--indigo-600)';
+            if (badgeRows) badgeRows.style.color = 'var(--indigo-600)';
+
+            // Toggle Gridlines Active State
+            const gridBtn = document.getElementById('btn-toggle-grid');
+            if (gridBtn) {
+                gridBtn.classList.toggle('active-state', showGridLines);
+            }
+
+            // NEW: Toggle Delete Selected Button in Toolbar
+            const deleteBtn = document.getElementById('btn-delete-selected');
+            if (deleteBtn) {
+                if (selectedItemId) {
+                    deleteBtn.classList.remove('hidden');
+                } else {
+                    deleteBtn.classList.add('hidden');
+                }
+            }
+
+            // 3. UI Updates
+            renderLayers();
+            renderTracks();
+
+            if (selectedItemId) {
+                renderItemEditor();
+            }
+
+            updateCode(); // Original rows/columns used for CSS export
+            saveToLocalStorage();
+        }
+        
+
+        function saveToLocalStorage() {
+            const state = {
+                columns,
+                rows,
+                colGap,
+                rowGap,
+                items,
+                lastActionWasPreset
+            };
+            localStorage.setItem('grid_designer_layout', JSON.stringify(state));
+        }
+        
+        
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('grid_designer_layout');
+            if (saved) {
+                try {
+                    const state = JSON.parse(saved);
+
+                    // 1. Re-assign state variables
+                    columns = state.columns || columns;
+                    rows = state.rows || rows;
+                    colGap = state.colGap ?? 0;
+                    rowGap = state.rowGap ?? 0;
+                    items = state.items || [];
+                    lastActionWasPreset = state.lastActionWasPreset || false;
+
+                    // 2. SYNC THE UI (The missing piece)
+                    const colInput = document.getElementById('col-gap');
+                    const rowInput = document.getElementById('row-gap');
+                    const colValText = document.getElementById('col-gap-val');
+                    const rowValText = document.getElementById('row-gap-val');
+
+                    if (colInput) colInput.value = colGap;
+                    if (rowInput) rowInput.value = rowGap;
+                    if (colValText) colValText.innerText = `${colGap}px`;
+                    if (rowValText) rowValText.innerText = `${rowGap}px`;
+
+                    console.log("Layout loaded and UI synced.");
+                } catch (e) {
+                    console.error("Failed to load layout:", e);
+                }
+            }
+        }
+
+        
+        function renderTracks() {
+            const renderItem = (type, val, idx) => `
+                <div class="track-item" 
+                     ondragover="handleDragOver(event)"
+                     ondragenter="handleDragEnter(event)"
+                     ondragleave="handleDragLeave(event)"
+                     ondrop="handleDrop(event, '${type}', ${idx})">
+
+                    <!-- ONLY the handle is draggable now -->
+                    <div class="drag-handle" 
+                         draggable="true" 
+                         ondragstart="handleDragStart(event, '${type}', ${idx})"
+                         ondragend="handleDragEnd(event)">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/>
+                            <circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/>
+                        </svg>
+                    </div>
+
+                    <div class="track-controls">
+                        <button class="track-btn ${val === '1fr' ? 'active' : ''}" onclick="setTrack('${type}', ${idx}, '1fr')">1fr</button>
+                        <button class="track-btn ${val === 'auto' ? 'active' : ''}" onclick="setTrack('${type}', ${idx}, 'auto')">Auto</button>
+                        <button class="track-btn ${val === '100px' ? 'active' : ''}" onclick="setTrack('${type}', ${idx}, '100px')">100px</button>
+                        <input class="track-input" value="${val}" onchange="setTrack('${type}', ${idx}, this.value)">
+                    </div>
+
+                    <button class="btn-icon-del" onclick="removeTrack('${type}', ${idx})">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                    </button>
+                </div>
+            `;
+
+            columnsList.innerHTML = columns.map((col, idx) => renderItem('col', col, idx)).join('');
+            rowsList.innerHTML = rows.map((row, idx) => renderItem('row', row, idx)).join('');
+        }
+
+        
+        function setAllTracks(type, value) {
+            if (type === 'col') {
+                // Map the current array to the new value
+                columns = columns.map(() => value);
+            } else {
+                rows = rows.map(() => value);
+            }
+            render();
+        }
+
+
+        
+        
+        /* --- Code for drag and dropping rows and columns to rearrange them */
+        let draggedItemInfo = null;
+        let dragCounter = 0; // NEW: Track nested drag events
+
+        function handleDragStart(e, type, index) {
+            draggedItemInfo = { type, index };
+
+            // Find the parent track-item to use as the visual drag image
+            const row = e.target.closest('.track-item');
+
+            // This tells the browser: "The handle started the drag, 
+            // but visually drag the whole row."
+            if (e.dataTransfer.setDragImage && row) {
+                // e.dataTransfer.setDragImage(element, xOffset, yOffset)
+                e.dataTransfer.setDragImage(row, 10, 10);
+            }
+
+            e.dataTransfer.effectAllowed = 'move';
+            dragCounter = 0;
+
+            // Add the dragging class to the whole row for styling
+            setTimeout(() => {
+                if (row) row.classList.add('dragging');
+            }, 0);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault(); 
+            return false;
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            const item = e.currentTarget; // Always target the item with the listener
+            dragCounter++; 
+
+            if (item) {
+                item.classList.add('drop-target');
+            }
+        }
+
+        function handleDragLeave(e) {
+            const item = e.currentTarget;
+            dragCounter--;
+
+            // Only remove the class if the counter hits zero
+            if (dragCounter <= 0 && item) {
+                item.classList.remove('drop-target');
+                dragCounter = 0; 
+            }
+        }
+
+        function handleDrop(e, type, dropIndex) {
+            e.preventDefault();
+            dragCounter = 0; // Reset
+
+            const item = e.currentTarget;
+            if (item) item.classList.remove('drop-target');
+
+            if (!draggedItemInfo || draggedItemInfo.type !== type) return;
+
+            const dragIndex = draggedItemInfo.index;
+            if (dragIndex === dropIndex) return;
+
+            const targetArray = type === 'col' ? columns : rows;
+            const [reorderedItem] = targetArray.splice(dragIndex, 1);
+            targetArray.splice(dropIndex, 0, reorderedItem);
+
+            render(); 
+        }
+        
+        function handleDragEnd(e) {
+            const row = e.target.closest('.track-item');
+            if (row) row.classList.remove('dragging');
+            dragCounter = 0;
+
+            // Cleanup any lingering drop targets
+            document.querySelectorAll('.drop-target').forEach(el => {
+                el.classList.remove('drop-target');
+            });
+        }
+        /* --- */
+    
+
+        function getRelativeTracks(tracks) {
+            // 1. Map the tracks to their "visual" equivalent
+            const visualTracks = tracks.map(t => {
+                const isPixel = String(t).includes('px') || (!isNaN(t) && t !== "");
+
+                if (isPixel) {
+                    // For fixed units, we use a "slither" size so they don't 
+                    // blow out the canvas representation
+                    return '40px'; 
+                }
+
+                // 1fr, auto, and % are treated as flexible fillers
+                return '1fr';
+            });
+
+            // 2. The "Ghost Filler" Logic:
+            // If every single track ended up being '40px', the canvas will look tiny.
+            // We check if there's at least one '1fr' to push the grid to the edges.
+            const hasFlexible = visualTracks.includes('1fr');
+
+            if (!hasFlexible && visualTracks.length > 0) {
+                // If all are fixed, we turn the last one into 1fr so the 
+                // grid fills the canvas container height/width.
+                visualTracks[visualTracks.length - 1] = '1fr';
+            }
+
+            return visualTracks;
+        }
+        
+        
+        function renderItemEditor() {
+            const item = items.find(i => i.id === selectedItemId);
+            if (!item) return;
+
+            document.getElementById('item-name').value = item.name;
+            document.getElementById('item-col-start').innerText = item.colStart;
+            document.getElementById('item-col-end').innerText = item.colEnd;
+            document.getElementById('item-row-start').innerText = item.rowStart;
+            document.getElementById('item-row-end').innerText = item.rowEnd;
+
+            colorPalette.innerHTML = colors.map(c => `
+                <div class="color-swatch ${item.bg === c ? 'active' : ''}" 
+                     style="background-color: ${c}" 
+                     onclick="updateCurrentItem({bg: '${c}'})"></div>
+            `).join('');
+        }
+
+        
+        function updateCode() {
+            let css = `.container {\n  display: grid;\n`;
+            css += `  grid-template-columns: ${columns.join(' ')};\n`;
+            css += `  grid-template-rows: ${rows.join(' ')};\n`;
+            css += `  column-gap: ${colGap}px;\n`;
+            css += `  row-gap: ${rowGap}px;\n`;
+            css += `}\n\n`;
+
+            items.forEach(item => {
+                const className = item.name.toLowerCase().replace(/\s+/g, '-');
+                css += `.${className} {\n`;
+                css += `  grid-column: ${item.colStart} / ${item.colEnd};\n`;
+                css += `  grid-row: ${item.rowStart} / ${item.rowEnd};\n`;
+                css += `}\n\n`;
+            });
+
+            codeOutput.innerText = css.trim();
+        }
+
+        
+        // --- Actions ---
+        function selectItem(id) {
+            selectedItemId = id;
+            tabItem.disabled = false;
+            switchTab('item');
+            render();
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+            if (tab === 'grid') {
+                tabGrid.classList.add('active');
+                tabItem.classList.remove('active');
+                contentGrid.classList.remove('hidden');
+                contentItem.classList.add('hidden');
+            } else {
+                tabGrid.classList.remove('active');
+                tabItem.classList.add('active');
+                contentGrid.classList.add('hidden');
+                contentItem.classList.remove('hidden');
+            }
+        }
+        
+        function setTrack(type, index, value) {
+            if (type === 'col') {
+                columns[index] = value;
+            } else {
+                rows[index] = value;
+            }
+            render();
+        }
+
+        function addColumn() {
+            lastActionWasPreset = false;
+            columns.push('1fr');
+            render();
+        }
+
+        function addRow() {
+            lastActionWasPreset = false;
+            //rows.push('100px');
+            rows.push('1fr'); // Using 1fr ensures it stays inside the canvas height
+            render();
+        }
+
+        function removeTrack(type, idx) {
+            lastActionWasPreset = false;
+            if (type === 'col') columns.splice(idx, 1);
+            else rows.splice(idx, 1);
+            render();
+        }
+
+        /*
+        function addNewItem() {
+            const newId = items.length > 0 ? Math.max(...items.map(i => i.id)) + 1 : 1;
+            items.push({
+                id: newId,
+                name: `Block ${newId}`,
+                colStart: 1,
+                colEnd: 2,
+                rowStart: 1,
+                rowEnd: 2,
+                bg: colors[Math.floor(Math.random() * colors.length)]
+            });
+            selectItem(newId);
+        }
+        */
+        
+        function addNewItem() {
+            lastActionWasPreset = false;
+            
+            const newId = items.length > 0 ? Math.max(...items.map(i => i.id)) + 1 : 1;
+
+            // 1. Get a list of colors currently in use
+            const usedColors = items.map(i => i.bg);
+
+            // 2. Filter the master colors array to find ones not in the used list
+            const availableColors = colors.filter(c => !usedColors.includes(c));
+
+            // 3. Choose the pool to pick from
+            const colorPool = availableColors.length > 0 ? availableColors : colors;
+
+            // 4. Pick a random color from the chosen pool
+            const randomColor = colorPool[Math.floor(Math.random() * colorPool.length)];
+
+            items.push({
+                id: newId,
+                name: `Block ${newId}`,
+                colStart: 1,
+                colEnd: 2,
+                rowStart: 1,
+                rowEnd: 2,
+                bg: randomColor
+            });
+
+            selectItem(newId);
+            // render(); // Make sure to call your render function if selectItem doesn't!
+        }
+        
+        
+        
+        function deleteCurrentItem() {
+            lastActionWasPreset = false;
+            items = items.filter(i => i.id !== selectedItemId);
+            selectedItemId = null;
+            //tabItem.disabled = true;
+            switchTab('grid');
+            render();
+        }
+
+        function updateCurrentItem(updates) {
+            lastActionWasPreset = false;
+            items = items.map(item => item.id === selectedItemId ? { ...item, ...updates } : item);
+            render();
+        }
+
+        
+        function adjustPlacement(prop, delta) {
+            const item = items.find(i => i.id === selectedItemId);
+            if (!item) return;
+
+            let val = item[prop] + delta;
+
+            // Improved Boundary Constraints
+            if (prop === 'colStart') val = Math.max(1, Math.min(item.colEnd - 1, val));
+            if (prop === 'colEnd')   val = Math.max(item.colStart + 1, Math.min(columns.length + 1, val));
+            if (prop === 'rowStart') val = Math.max(1, Math.min(item.rowEnd - 1, val));
+            if (prop === 'rowEnd')   val = Math.max(item.rowStart + 1, Math.min(rows.length + 1, val));
+
+            updateCurrentItem({ [prop]: val });
+        }
+
+
+        
+    
+        
+        let lastActionWasPreset = false; // Flag to track if the current state is an untouched preset
+        let pendingPresetType = null; // Store the type while the modal is open
+        
+        
+        function applyPreset(type) {
+            // CONDITION: Prompt if items exist AND the user has made changes since the last preset
+            if (items.length > 0 && !lastActionWasPreset) {
+                pendingPresetType = type;
+                document.getElementById('preset-confirm-modal').classList.remove('hidden');
+
+                // Update the confirm button to execute the logic
+                document.getElementById('confirm-preset-btn').onclick = () => {
+                    executePresetLogic(pendingPresetType);
+                    closeAllModals();
+                };
+                return; // Stop here and wait for modal
+            }
+
+            // Otherwise, apply immediately
+            executePresetLogic(type);
+        }
+        
+        
+        function executePresetLogic(type) {
+            if (type === 'holy-grail') {
+                columns = ['200px', '1fr', '200px'];
+                rows = ['60px', '1fr', '60px'];
+                items = [
+                    { id: 1, name: 'Header', colStart: 1, colEnd: 4, rowStart: 1, rowEnd: 2, bg: '#3b82f6' },
+                    { id: 2, name: 'Left', colStart: 1, colEnd: 2, rowStart: 2, rowEnd: 3, bg: '#6366f1' },
+                    { id: 3, name: 'Main', colStart: 2, colEnd: 3, rowStart: 2, rowEnd: 3, bg: '#f59e0b' },
+                    { id: 4, name: 'Right', colStart: 3, colEnd: 4, rowStart: 2, rowEnd: 3, bg: '#10b981' },
+                    { id: 5, name: 'Footer', colStart: 1, colEnd: 4, rowStart: 3, rowEnd: 4, bg: '#64748b' },
+                ];
+            } else if (type === 'dashboard') {
+                columns = ['80px', '1fr', '1fr'];
+                rows = ['1fr', '1fr'];
+                items = [
+                    { id: 1, name: 'Nav', colStart: 1, colEnd: 2, rowStart: 1, rowEnd: 3, bg: '#1e293b' },
+                    { id: 2, name: 'Stat 1', colStart: 2, colEnd: 3, rowStart: 1, rowEnd: 2, bg: '#ec4899' },
+                    { id: 3, name: 'Stat 2', colStart: 3, colEnd: 4, rowStart: 1, rowEnd: 2, bg: '#8b5cf6' },
+                    { id: 4, name: 'Chart', colStart: 2, colEnd: 4, rowStart: 2, rowEnd: 3, bg: '#06b6d4' },
+                ];
+            } 
+            // --- NEW TEMPLATES ---
+            else if (type === 'bento-grid') {
+                columns = ['1fr', '1fr', '1fr', '1fr'];
+                rows = ['1fr', '1fr', '1fr'];
+                items = [
+                    { id: 1, name: 'Featured', colStart: 1, colEnd: 3, rowStart: 1, rowEnd: 3, bg: '#3b82f6' },
+                    { id: 2, name: 'Top Right', colStart: 3, colEnd: 5, rowStart: 1, rowEnd: 2, bg: '#10b981' },
+                    { id: 3, name: 'Middle', colStart: 3, colEnd: 4, rowStart: 2, rowEnd: 3, bg: '#f59e0b' },
+                    { id: 4, name: 'Middle Right', colStart: 4, colEnd: 5, rowStart: 2, rowEnd: 3, bg: '#ec4899' },
+                    { id: 5, name: 'Bottom Row', colStart: 1, colEnd: 5, rowStart: 3, rowEnd: 4, bg: '#8b5cf6' },
+                ];
+            } else if (type === 'ecommerce') {
+                columns = ['250px', '1fr', '1fr', '1fr'];
+                rows = ['80px', 'auto', '1fr'];
+                items = [
+                    { id: 1, name: 'Header/Search', colStart: 1, colEnd: 5, rowStart: 1, rowEnd: 2, bg: '#1e293b' },
+                    { id: 2, name: 'Filters', colStart: 1, colEnd: 2, rowStart: 2, rowEnd: 4, bg: '#10b981' },
+                    { id: 3, name: 'Product 1', colStart: 2, colEnd: 3, rowStart: 2, rowEnd: 3, bg: '#3b82f6' },
+                    { id: 4, name: 'Product 2', colStart: 3, colEnd: 4, rowStart: 2, rowEnd: 3, bg: '#3b82f6' },
+                    { id: 5, name: 'Product 3', colStart: 4, colEnd: 5, rowStart: 2, rowEnd: 3, bg: '#3b82f6' },
+                    { id: 6, name: 'Featured Promo', colStart: 2, colEnd: 5, rowStart: 3, rowEnd: 4, bg: '#f59e0b' },
+                ];
+            } else if (type === 'admin-grid') {
+                columns = ['repeat(4, 1fr)'];
+                rows = ['100px', '1fr'];
+                items = [
+                    { id: 1, name: 'Card', colStart: 1, colEnd: 2, rowStart: 1, rowEnd: 2, bg: '#10b981' },
+                    { id: 2, name: 'Card', colStart: 2, colEnd: 3, rowStart: 1, rowEnd: 2, bg: '#3b82f6' },
+                    { id: 3, name: 'Card', colStart: 3, colEnd: 4, rowStart: 1, rowEnd: 2, bg: '#f59e0b' },
+                    { id: 4, name: 'Card', colStart: 4, colEnd: 5, rowStart: 1, rowEnd: 2, bg: '#ec4899' },
+                    { id: 5, name: 'Main Table', colStart: 1, colEnd: 4, rowStart: 2, rowEnd: 4, bg: '#f59e0b' },
+                    { id: 6, name: 'Side Info', colStart: 4, colEnd: 5, rowStart: 2, rowEnd: 4, bg: '#3b82f6' },
+                ];
+            } else if (type === 'gallery-split') {
+                columns = ['2fr', '1fr'];
+                rows = ['1fr', '1fr'];
+                items = [
+                    { id: 1, name: 'Main Visual', colStart: 1, colEnd: 2, rowStart: 1, rowEnd: 3, bg: '#2563eb' },
+                    { id: 2, name: 'Sub 1', colStart: 2, colEnd: 3, rowStart: 1, rowEnd: 2, bg: '#7c3aed' },
+                    { id: 3, name: 'Sub 2', colStart: 2, colEnd: 3, rowStart: 2, rowEnd: 3, bg: '#db2777' },
+                ];
+            } else if (type === 'portfolio-header') {
+                columns = ['1fr', '1fr', '1fr'];
+                rows = ['200px', '200px'];
+                items = [
+                    { id: 1, name: 'Intro Text', colStart: 1, colEnd: 3, rowStart: 1, rowEnd: 3, bg: '#0f172a' },
+                    { id: 2, name: 'Profile Pic', colStart: 3, colEnd: 4, rowStart: 1, rowEnd: 2, bg: '#38bdf8' },
+                    { id: 3, name: 'Socials', colStart: 3, colEnd: 4, rowStart: 2, rowEnd: 3, bg: '#475569' },
+                ];
+            } else if (type === 'mobile-app') {
+                columns = ['1fr'];
+                rows = ['60px', '1fr', '70px'];
+                items = [
+                    { id: 1, name: 'App Bar', colStart: 1, colEnd: 2, rowStart: 1, rowEnd: 2, bg: '#6366f1' },
+                    { id: 2, name: 'Screen Content', colStart: 1, colEnd: 2, rowStart: 2, rowEnd: 3, bg: '#10b981' },
+                    { id: 3, name: 'Bottom Tabs', colStart: 1, colEnd: 2, rowStart: 3, rowEnd: 4, bg: '#db2777' },
+                ];
+            } else if (type === 'sticky-social') {
+                columns = ['60px', '1fr', '300px'];
+                rows = ['1fr'];
+                items = [
+                    { id: 1, name: 'Icons', colStart: 1, colEnd: 2, rowStart: 1, rowEnd: 2, bg: '#334155' },
+                    { id: 2, name: 'Feed', colStart: 2, colEnd: 3, rowStart: 1, rowEnd: 2, bg: '#db2777' },
+                    { id: 3, name: 'Trending', colStart: 3, colEnd: 4, rowStart: 1, rowEnd: 2, bg: '#2563eb' },
+                ];
+            }
+
+            // IMPORTANT: Set the flag to true after applying
+            lastActionWasPreset = true; 
+
+            selectedItemId = null;
+            //tabItem.disabled = true;
+            switchTab('grid');
+            render();
+        }
+        
+        
+        
+        // --- Event Listeners ---
+        tabGrid.onclick = () => switchTab('grid');
+        tabItem.onclick = () => { if(!tabItem.disabled) switchTab('item') };
+        
+        document.getElementById('col-gap').oninput = (e) => {
+            colGap = parseInt(e.target.value);
+            document.getElementById('col-gap-val').innerText = `${colGap}px`;
+            render();
+        };
+        
+        document.getElementById('row-gap').oninput = (e) => {
+            rowGap = parseInt(e.target.value);
+            document.getElementById('row-gap-val').innerText = `${rowGap}px`;
+            render();
+        };
+        
+        document.getElementById('item-name').oninput = (e) => {
+            updateCurrentItem({ name: e.target.value });
+        };
+
+        // Click outside to deselect
+        document.querySelector('.main-preview').onclick = (e) => {
+            if (e.target.classList.contains('main-preview') || e.target.classList.contains('canvas')) {
+                selectedItemId = null;
+                //tabItem.disabled = true;
+                switchTab('grid');
+                render();
+            }
+        };
+
+
+        
+        
+        
+        // --- New: Layer List Logic ---
+        function renderLayers() {
+            const layersList = document.getElementById('layers-list');
+            layersList.innerHTML = items.map(item => `
+                <div class="track-item ${selectedItemId === item.id ? 'active-layer' : ''}" 
+                     onclick="selectItem(${item.id})" 
+                     style="border-left: 4px solid ${item.bg}; cursor: pointer; padding-left: 8px;">
+                    <span style="font-size: 0.8rem; font-weight: 600;">${item.name}</span>
+                    <span style="font-size: 0.7rem; color: var(--slate-400)">L:${item.colStart} R:${item.rowStart}</span>
+                </div>
+            `).join('');
+        }
+
+        // --- New: Drag & Resize Engine ---
+        function startDrag(e, item) {
+            e.stopPropagation();
+            selectItem(item.id);
+            isDragging = true;
+            initialItemState = { ...item };
+            startX = e.clientX;
+            startY = e.clientY;
+
+            document.addEventListener('pointermove', handlePointerMove);
+            document.addEventListener('pointerup', stopInteraction);
+        }
+
+        function startResize(e, item, handle) {
+            e.stopPropagation();
+            isResizing = true;
+            resizeHandle = handle;
+            initialItemState = { ...item };
+            startX = e.clientX;
+            startY = e.clientY;
+
+            document.addEventListener('pointermove', handlePointerMove);
+            document.addEventListener('pointerup', stopInteraction);
+        }
+
+        function handlePointerMove(e) {
+            if (!isDragging && !isResizing) return;
+
+            const rect = gridVisualizer.getBoundingClientRect();
+            const cellWidth = rect.width / columns.length;
+            const cellHeight = rect.height / rows.length;
+
+            const diffX = Math.round((e.clientX - startX) / cellWidth);
+            const diffY = Math.round((e.clientY - startY) / cellHeight);
+
+            let updates = {};
+
+            if (isDragging) {
+                const width = initialItemState.colEnd - initialItemState.colStart;
+                const height = initialItemState.rowEnd - initialItemState.rowStart;
+
+                updates.colStart = Math.max(1, Math.min(columns.length - width + 1, initialItemState.colStart + diffX));
+                updates.colEnd = updates.colStart + width;
+                updates.rowStart = Math.max(1, Math.min(rows.length - height + 1, initialItemState.rowStart + diffY));
+                updates.rowEnd = updates.rowStart + height;
+            } 
+            else if (isResizing) {
+                if (resizeHandle.includes('e')) updates.colEnd = Math.max(initialItemState.colStart + 1, Math.min(columns.length + 1, initialItemState.colEnd + diffX));
+                if (resizeHandle.includes('w')) updates.colStart = Math.max(1, Math.min(initialItemState.colEnd - 1, initialItemState.colStart + diffX));
+                if (resizeHandle.includes('s')) updates.rowEnd = Math.max(initialItemState.rowStart + 1, Math.min(rows.length + 1, initialItemState.rowEnd + diffY));
+                if (resizeHandle.includes('n')) updates.rowStart = Math.max(1, Math.min(initialItemState.rowEnd - 1, initialItemState.rowStart + diffY));
+            }
+
+            updateCurrentItem(updates);
+        }
+
+        function stopInteraction() {
+            isDragging = false;
+            isResizing = false;
+            document.removeEventListener('pointermove', handlePointerMove);
+            document.removeEventListener('pointerup', stopInteraction);
+        }
+        
+        
+        
+        
+        
+        /* --- For Grid Lines */
+        let showGridLines = true;
+
+        function toggleGrid() {
+            showGridLines = !showGridLines;
+            render();
+        }
+
+        function drawGridLines(visualCols, visualRows) {
+            if (!showGridLines) return;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'grid-overlay';
+
+            overlay.style.display = 'grid';
+            overlay.style.gridTemplateColumns = visualCols.join(' ');
+            overlay.style.gridTemplateRows = visualRows.join(' ');
+            overlay.style.columnGap = `${colGap}px`;
+            overlay.style.rowGap = `${rowGap}px`;
+            overlay.style.position = 'absolute';
+            overlay.style.inset = '0';
+            overlay.style.pointerEvents = 'none';
+            overlay.style.zIndex = '0';
+
+            const cellCount = columns.length * rows.length;
+            for (let i = 0; i < cellCount; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell-helper';
+                overlay.appendChild(cell);
+            }
+            gridVisualizer.appendChild(overlay);
+        }
+        /* --- */
+        
+        
+
+
+        function toggleSidebar(forceState) {
+            const sidebar = document.getElementById('main-sidebar');
+            const btn = document.getElementById('app-btn-toggle-sidebar');
+
+            if (forceState === "open") {
+                sidebar.classList.remove('collapsed');
+                btn.classList.add('active');
+            } else if (forceState === "close") {
+                sidebar.classList.add('collapsed');
+                btn.classList.remove('active');
+            } else {
+                // No argument: toggle as usual
+                sidebar.classList.toggle('collapsed');
+                btn.classList.toggle('active');
+            }
+        }
+
+
+        
+        /* --- for resizer slider */
+        let lastWidth = window.innerWidth;
+        const resizer = document.getElementById('sidebar-resizer');
+
+        if (resizer) {
+            // Crucial for mobile: prevents the screen from scrolling while dragging the handle
+            resizer.style.touchAction = 'none'; 
+
+            resizer.addEventListener('mousedown', initResize, false);
+            resizer.addEventListener('touchstart', initResize, { passive: false });
+        }
+
+        let currentOnResize = null;
+        let currentOnStop = null;
+
+        function initResize(e) {
+            const sidebar = document.getElementById('main-sidebar');
+            if (!sidebar) return;
+
+            // Prevent default browser behavior (like scrolling or text selection)
+            if (e.cancelable) e.preventDefault();
+
+            const isMobile = window.innerWidth <= 768;
+
+            currentOnResize = (moveEvent) => {
+                // Handle coordinates for both Mouse and Touch
+                let clientX, clientY;
+
+                if (moveEvent.touches && moveEvent.touches.length > 0) {
+                    clientX = moveEvent.touches[0].clientX;
+                    clientY = moveEvent.touches[0].clientY;
+                } else {
+                    clientX = moveEvent.clientX;
+                    clientY = moveEvent.clientY;
+                }
+
+                if (window.innerWidth <= 768) {
+                    // Mobile: Calculate height from the bottom up
+                    const newHeight = window.innerHeight - clientY;
+
+                    // Constraints: Min 100px, Max 90% of screen
+                    if (newHeight > 100 && newHeight < window.innerHeight * 0.9) {
+                        sidebar.style.height = newHeight + 'px';
+                        sidebar.style.width = '100%'; // Ensure it stays full width
+                    }
+                } else {
+                    // Desktop: Calculate width from the left
+                    if (clientX > 250 && clientX < 600) {
+                        sidebar.style.width = clientX + 'px';
+                    }
+                }
+            };
+
+            currentOnStop = () => {
+                window.removeEventListener('mousemove', currentOnResize);
+                window.removeEventListener('mouseup', currentOnStop);
+                window.removeEventListener('touchmove', currentOnResize);
+                window.removeEventListener('touchend', currentOnStop);
+                document.body.style.cursor = 'default';
+            };
+
+            window.addEventListener('mousemove', currentOnResize, { passive: false });
+            window.addEventListener('mouseup', currentOnStop);
+            window.addEventListener('touchmove', currentOnResize, { passive: false });
+            window.addEventListener('touchend', currentOnStop);
+
+            document.body.style.cursor = isMobile ? 'row-resize' : 'col-resize';
+        }
+
+        window.addEventListener('resize', () => {
+            const currentWidth = window.innerWidth;
+            const threshold = 768;
+
+            // Check if we just crossed the threshold (either shrinking or growing)
+            if ((lastWidth > threshold && currentWidth <= threshold) || 
+                (lastWidth <= threshold && currentWidth > threshold)) {
+
+                const sidebar = document.getElementById('main-sidebar');
+                if (sidebar) {
+                    // Remove the inline styles so the CSS classes can take over again
+                    sidebar.style.removeProperty('width');
+                    sidebar.style.removeProperty('height');
+                }
+            }
+
+            lastWidth = currentWidth;
+        });   
+        /* --- */
+        
+        
+
+        
+        
+
+        function openHelp() {
+            const modal = document.getElementById('help-modal');
+            modal.classList.remove('hidden');
+
+            // Close modal if clicking outside the window
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    closeHelp();
+                }
+            };
+        }
+
+        function closeHelp() {
+            const modal = document.getElementById('help-modal');
+            modal.classList.add('hidden');
+        }
+
+
+        
+        
+        
+        /* --- for the tutorial */
+        const tutorialSteps = [
+            { 
+                id: 'id-canvas', 
+                text: 'This is your design canvas. All your grid modifications will appear here in real-time.',
+                action: () => {
+                    toggleSidebar('close'); // start from a closed menu
+                },
+                msgPos:'bottom'
+            },
+            { 
+                id: 'id-canvas-toolbar', 
+                text: 'Quickly adjust column and row counts, or add and delete blocks directly on the canvas.',
+                action: () => {},
+                msgPos:'bottom'
+                
+            },
+            { 
+                id: 'id-canvas-quick-presets', 
+                text: 'Try these instant layouts to quickly prototype common design patterns.',
+                action: () => {},
+                msgPos:'top'
+            },
+            { 
+                id: 'app-btn-toggle-sidebar', 
+                text: 'Toggle this to hide or show the sidebar and maximize your design space.',
+                action: () => {
+                    const sidebar = document.getElementById('main-sidebar');
+                    if (sidebar.classList.contains('collapsed')) {
+                        switchTab('grid');
+                        toggleSidebar('open');
+                    }
+                },
+                msgPos:'bottom'
+            },
+            { 
+                id: 'main-sidebar', 
+                text: 'This panel contains all your detailed configuration settings for the grid and individual blocks.',
+                action: () => {},
+                msgPos:'right'
+            },
+            { 
+                id: 'id-sidebar-add-block-btn', 
+                text: 'Create a new element within your grid. Once added, you can style and position it.',
+                action: () => {},
+                msgPos:'top'
+            },
+            { 
+                id: 'main-sidebar', 
+                text: 'The Block Styles tab is where you edit a blocks properties, name, colour, size, etc.',
+                action: () => {
+                    // 1. Find and click the add block button
+                    document.getElementById('id-sidebar-add-block-btn').click();
+
+                    // 2. Run your tab switching function
+                    switchTab('item');
+                },
+                msgPos:'right'
+            },
+            { 
+                id: 'id-title-demo-btn', 
+                text: 'Enter Demo Mode to view your grid without the editor interface for a true preview.',
+                action: () => {
+                    toggleSidebar('close'); // start from a closed menu
+                },
+                msgPos:'bottomright'
+            },
+            { 
+                id: 'id-title-export-btn', 
+                text: 'Ready to code? Export your layout as clean, production-ready HTML and CSS.',
+                action: () => {},
+                msgPos:'bottomright'
+            },
+            { 
+                id: 'id-title-reset-btn', 
+                text: 'Careful! This will clear your entire progress and return the canvas to the default state.',
+                action: () => {},
+                msgPos:'bottomright'
+            }
+        ];
+        
+        
+        let currentStep = 0;
+
+        function startTutorial() {
+            closeHelp(); // Close the modal
+            currentStep = 0;
+            document.getElementById('tutorial-spotlight').classList.remove('hidden');
+            showStep();
+
+            // Listen for Enter Key
+            window.addEventListener('keydown', handleTourKeydown);
+        }
+
+        function showStep() {
+            const step = tutorialSteps[currentStep];
+
+            if (typeof step.action === 'function') {
+                step.action();
+            }
+
+            requestAnimationFrame(() => {
+                const target = document.getElementById(step.id);
+                const spotlight = document.getElementById('tutorial-spotlight');
+                const tooltip = document.getElementById('tutorial-tooltip');
+                const text = document.getElementById('tutorial-text');
+
+                if (!target) return;
+
+                const rect = target.getBoundingClientRect();
+                const pad = 8;
+                const offset = 20;
+
+                // 1. Position Spotlight
+                spotlight.style.width = (rect.width + pad * 2) + 'px';
+                spotlight.style.height = (rect.height + pad * 2) + 'px';
+                spotlight.style.left = (rect.left - pad) + 'px';
+                spotlight.style.top = (rect.top - pad) + 'px';
+
+                // 2. Reset styles
+                tooltip.style.top = tooltip.style.bottom = tooltip.style.left = tooltip.style.right = '';
+                tooltip.style.transform = '';
+
+                // 3. Initial Position based on msgPos
+                switch (step.msgPos) {
+                    case 'bottom':
+                        tooltip.style.top = `calc(100% + ${offset}px)`;
+                        tooltip.style.left = '50%';
+                        tooltip.style.transform = 'translateX(-50%)';
+                        break;
+                    case 'top':
+                        tooltip.style.bottom = `calc(100% + ${offset}px)`;
+                        tooltip.style.left = '50%';
+                        tooltip.style.transform = 'translateX(-50%)';
+                        break;
+                    case 'right':
+                        tooltip.style.left = `calc(100% + ${offset}px)`;
+                        tooltip.style.top = '50%';
+                        tooltip.style.transform = 'translateY(-50%)';
+                        break;
+                    case 'left':
+                        tooltip.style.right = `calc(100% + ${offset}px)`;
+                        tooltip.style.top = '50%';
+                        tooltip.style.transform = 'translateY(-50%)';
+                        break;
+
+                    // --- Corner Positions ---
+                    case 'topleft':
+                        tooltip.style.bottom = `calc(100% + ${offset}px)`;
+                        tooltip.style.left = `calc(0% - ${offset}px)`;
+                        break;
+                    case 'topright':
+                        tooltip.style.bottom = `calc(100% + ${offset}px)`;
+                        tooltip.style.right = `calc(0% + ${offset}px)`;
+                        break;
+                    case 'bottomleft':
+                        tooltip.style.top = `calc(100% + ${offset}px)`;
+                        tooltip.style.left = `calc(0% - ${offset}px)`;
+                        break;
+                    case 'bottomright':
+                        tooltip.style.top = `calc(100% + ${offset}px)`;
+                        tooltip.style.right = `calc(0% + ${offset}px)`;
+                        break;
+                }
+
+                text.innerText = step.text;
+
+                // 4. SCREEN SAFETY CHECK
+                // Wait a frame for the layout to apply, then nudge if bleeding
+                requestAnimationFrame(() => {
+                    const tipRect = tooltip.getBoundingClientRect();
+                    const margin = 20; // Distance from screen edge
+
+                    // Check Right Edge
+                    if (tipRect.right > window.innerWidth) {
+                        const diff = tipRect.right - window.innerWidth + margin;
+                        tooltip.style.left = `calc(50% - ${diff}px)`;
+                    }
+
+                    // Check Left Edge
+                    if (tipRect.left < 0) {
+                        const diff = Math.abs(tipRect.left) + margin;
+                        tooltip.style.left = `calc(50% + ${diff}px)`;
+                    }
+                });
+            });
+        }
+
+        
+        function nextStep() {
+            currentStep++;
+            if (currentStep < tutorialSteps.length) {
+                showStep();
+            } else {
+                exitTutorial();
+            }
+        }
+        
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep();
+            }
+        }
+        
+        function exitTutorial() {
+            document.getElementById('tutorial-spotlight').classList.add('hidden');
+            window.removeEventListener('keydown', handleTourKeydown);
+        }
+
+        function handleTourKeydown(e) {
+            if (e.key === 'Enter' || e.key === 'ArrowRight') {
+                nextStep();
+            }
+            if (e.key === 'ArrowLeft') {
+                prevStep();
+            }
+            if (e.key === 'Escape') {
+                exitTutorial();
+            }
+        }
+        /* --- */ 
+        
+        
+        
+        
+        
+
+        /* --- Reset Canvas Logic */
+        function openDeleteSingleBlockModal() {
+            document.getElementById('delete-single-block-modal').classList.remove('hidden');
+        }
+        
+        // Openers
+        function openDeleteBlocksModal() {
+            document.getElementById('delete-blocks-modal').classList.remove('hidden');
+        }
+
+        function openResetGridModal() {
+            document.getElementById('reset-grid-modal').classList.remove('hidden');
+        }
+
+        // Universal Closer (closes any modal with the 'modal-overlay' class)
+        function closeAllModals() {
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.classList.add('hidden');
+            });
+        }
+
+        function openResetModal() {
+            document.getElementById('reset-modal').classList.remove('hidden');
+        }
+
+        function closeResetModal() {
+            document.getElementById('reset-modal').classList.add('hidden');
+        }
+
+        function confirmReset() {
+            // 1. Reset State Management variables
+            columns = ['1fr', '1fr', '1fr']; // Default starting columns
+            rows = ['1fr', '1fr'];           // Default starting rows
+            colGap = 0;
+            rowGap = 0;
+            items = [];                      // Clear all blocks
+            selectedItemId = null;           // Deselect
+            activeTab = 'grid';
+
+            // 2. UI Cleanup
+            //tabItem.disabled = true;         // Disable item tab since no items exist
+            switchTab('grid');               // Move back to grid tab
+
+            // 3. Finalize
+            render();                        // Re-draw everything
+            closeResetModal();               // Hide modal
+
+            console.log("Canvas has been reset to default.");
+        }
+        
+        // Modular Reset Logic
+        function performReset(mode) {
+            if (mode === 'blocks' || mode === 'both') {
+                items = []; // Clear all blocks
+                selectedItemId = null; // Deselect
+            }
+
+            if (mode === 'grid' || mode === 'both') {
+                columns = ['1fr', '1fr', '1fr']; // Reset to default columns
+                rows = ['1fr', '1fr'];           // Reset to default rows
+                colGap = 0;
+                rowGap = 0;
+            }
+
+            if (mode === 'both') {
+                localStorage.removeItem('grid_designer_layout');
+            }
+            
+            // UI Cleanup & Refresh
+            switchTab('grid');
+            render();
+            closeResetModal();
+
+            console.log(`Reset complete: ${mode}`);
+        }
+        
+        /* --- */     
+        
+        
+        
+        
+        
+        
+        
+        
+        /* --- For Resetting and Syncing Columna nd Rows Gaps */
+        const colSlider = document.getElementById('col-gap');
+        const rowSlider = document.getElementById('row-gap');
+        const colInput = document.getElementById('col-gap-num');
+        const rowInput = document.getElementById('row-gap-num');
+        const syncCheck = document.getElementById('sync-gaps');
+        const rowInputContainer = document.getElementById('row-input-container');
+
+        function updateGaps(val, type) {
+            if (type === 'col') {
+                colSlider.value = val;
+                colInput.value = val;
+                if (syncCheck.checked) {
+                    rowSlider.value = val;
+                    rowInput.value = val;
+                }
+            } else {
+                rowSlider.value = val;
+                rowInput.value = val;
+            }
+
+            // Trigger your existing grid update logic here
+            // applyStyles(); 
+        }
+
+        // Event Listeners for Sliders
+        colSlider.oninput = (e) => updateGaps(e.target.value, 'col');
+        rowSlider.oninput = (e) => updateGaps(e.target.value, 'row');
+
+        // Event Listeners for Number Inputs
+        colInput.oninput = (e) => updateGaps(e.target.value, 'col');
+        rowInput.oninput = (e) => updateGaps(e.target.value, 'row');
+
+        // Sync Logic
+        syncCheck.onchange = () => {
+            if (syncCheck.checked) {
+                rowSlider.classList.add('disabled-control');
+                rowInputContainer.classList.add('disabled-control');
+                updateGaps(colSlider.value, 'col'); // Immediate sync
+            } else {
+                rowSlider.classList.remove('disabled-control');
+                rowInputContainer.classList.remove('disabled-control');
+            }
+        };
+
+        // Reset Function
+        function resetGaps() {
+            updateGaps(16, 'col');
+            updateGaps(16, 'row');
+        }
+        /* --- */
+        
+        
+        
+        
+        
+        
+        /* --- for demo mode */
+        let isDemoMode = false;
+
+        function toggleDemoMode() {
+            const overlay = document.getElementById('demo-overlay');
+            const container = document.getElementById('demo-grid-container');
+
+            isDemoMode = !isDemoMode;
+
+            if (isDemoMode) {
+                overlay.classList.remove('demo-hidden');
+                renderDemo(container);
+            } else {
+                overlay.classList.add('demo-hidden');
+            }
+        }
+
+        function renderDemo(container) {
+            // 1. Clear previous demo
+            container.innerHTML = '';
+
+            // 2. Apply RAW grid logic (1:1 representation)
+            container.style.gridTemplateColumns = columns.join(' ');
+            container.style.gridTemplateRows = rows.join(' ');
+            container.style.columnGap = `${colGap}px`;
+            container.style.rowGap = `${rowGap}px`;
+
+            // 3. Inject Items
+            items.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'demo-item';
+                el.style.backgroundColor = item.bg;
+                el.style.gridColumn = `${item.colStart} / ${item.colEnd}`;
+                el.style.gridRow = `${item.rowStart} / ${item.rowEnd}`;
+
+                // Add content/label
+                el.innerText = item.name;
+
+                container.appendChild(el);
+            });
+        }
+        /* --- */
+        
+        
+        
+        
+        
+        // Helper to update all UI elements for gaps
+        function updateGapUI() {
+            // Update Slider values
+            document.getElementById('col-gap').value = colGap;
+            document.getElementById('row-gap').value = rowGap;
+            // Update Number Input values
+            document.getElementById('col-gap-num').value = colGap;
+            document.getElementById('row-gap-num').value = rowGap;
+        }
+
+        // COLUMN GAP LOGIC
+        const colGapInput = (val) => {
+            colGap = parseInt(val) || 0;
+            if (document.getElementById('sync-gaps').checked) {
+                rowGap = colGap;
+            }
+            updateGapUI();
+            render();
+        };
+
+        // ROW GAP LOGIC
+        const rowGapInput = (val) => {
+            saveToLocalStorage();
+            rowGap = parseInt(val) || 0;
+            if (document.getElementById('sync-gaps').checked) {
+                colGap = rowGap;
+            }
+            updateGapUI();
+            render();
+        };
+
+        // Attach listeners to Sliders
+        document.getElementById('col-gap').oninput = (e) => colGapInput(e.target.value);
+        document.getElementById('row-gap').oninput = (e) => rowGapInput(e.target.value);
+
+        // Attach listeners to Number Inputs
+        document.getElementById('col-gap-num').oninput = (e) => colGapInput(e.target.value);
+        document.getElementById('row-gap-num').oninput = (e) => rowGapInput(e.target.value);
+
+        // Reset Logic
+        function resetGaps() {
+            colGap = 0;
+            rowGap = 0;
+            updateGapUI();
+            render();
+        }
+
+        
+        
+        
+        
+        
+        
+        
+        /* --- for export */
+        function openExport() {
+            // Ensure the previews are fresh before showing the modal
+            updateCode();
+            
+            const modal = document.getElementById('export-modal');
+            const filenameInput = document.getElementById('export-filename');
+
+            // Generate the actual code strings
+            const htmlCode = generateHTML(); // You likely have an updateCode() function already
+            const cssCode = generateCSS(); 
+
+            document.getElementById('html-preview').innerText = htmlCode;
+            document.getElementById('css-preview').innerText = cssCode;
+
+            modal.classList.remove('hidden');
+
+            // Focus logic: Only focus on large screens (> 1024px)
+            if (window.innerWidth > 1024) {
+                setTimeout(() => filenameInput.select(), 100);
+            }
+        }
+
+        function closeExport() {
+            document.getElementById('export-modal').classList.add('hidden');
+        }
+
+        function copyToClipboard(type) {
+            const content = type === 'html' ? generateHTML() : generateCSS();
+            navigator.clipboard.writeText(content).then(() => {
+                alert(`${type.toUpperCase()} copied to clipboard!`);
+            });
+        }
+
+        function downloadExport() {
+            const filename = document.getElementById('export-filename').value || 'gridflex-layout';
+            const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>${generateCSS()}</style>
+        </head>
+        <body>
+            ${generateHTML()}
+        </body>
+        </html>`;
+
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${filename}.html`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Ensure you have these helper functions based on your items/rows/cols state
+        function generateHTML() {
+            return `<div class="grid-container">\n` + 
+                items.map(item => `  <div class="grid-item item-${item.id}">${item.name}</div>`).join('\n') + 
+                `\n</div>`;
+        }
+
+        function generateCSS() {
+            let css = `.grid-container {\n  display: grid;\n`;
+            css += `  grid-template-columns: ${columns.join(' ')};\n`;
+            css += `  grid-template-rows: ${rows.join(' ')};\n`;
+            css += `  gap: ${rowGap}px ${colGap}px;\n}\n\n`;
+
+            items.forEach(item => {
+                css += `.item-${item.id} {\n`;
+                css += `  grid-column: ${item.colStart} / ${item.colEnd};\n`;
+                css += `  grid-row: ${item.rowStart} / ${item.rowEnd};\n`;
+                css += `  background-color: ${item.bg};\n}\n\n`;
+            });
+            return css;
+        }
+        /* ---*/
+        
+        
+        
+        
+        function showMorePresets() {
+            // 1. Reset the scroll INSTANTLY before the sidebar even finishes opening
+            // This clears the "1px trap" while the container is moving
+            const scrollContainer = document.getElementById('id-sidebar-content');
+            if (scrollContainer) {
+                scrollContainer.style.scrollBehavior = 'auto';
+                scrollContainer.scrollTop = 0;
+            }
+
+            // 2. Trigger the opening actions
+            toggleSidebar('open'); 
+            switchTab('grid');
+
+            // 3. Wait for the sidebar to be mostly open, then glide
+            setTimeout(() => {
+                const targetSection = document.getElementById('id-sidebar-quick-presets');
+
+                if (scrollContainer) {
+                    // Re-enable smooth behavior
+                    scrollContainer.style.scrollBehavior = 'smooth';
+
+                    // Glide to the top
+                    scrollContainer.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+
+                if (targetSection) {
+                    // Visual feedback
+                    targetSection.classList.remove('highlight-flash');
+                    void targetSection.offsetWidth; 
+                    targetSection.classList.add('highlight-flash');
+                }
+            }, 450); // Just as the 400ms transition finishes
+        }
+        
+        
+        
+        
+        /* --- For Keyboard shortcuts to blocks, delete, arrows to move, shift and arrows to resize */
+        document.addEventListener('keydown', (e) => {
+            // 1. If no item is selected, or user is typing in an input/textarea, ignore shortcuts
+            if (!selectedItemId || ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+                return;
+            }
+
+            const item = items.find(i => i.id === selectedItemId);
+            if (!item) return;
+
+            // 2. Handle Delete Key
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                e.preventDefault();
+                openDeleteSingleBlockModal(); // Triggering your new custom modal
+                return;
+            }
+
+            // 3. Handle Arrow Keys (Shift + Arrow = Resize | Arrow = Move)
+            const isShift = e.shiftKey;
+                let updates = {};
+
+                switch (e.key) {
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        if (isShift) {
+                            if (item.rowEnd > item.rowStart + 1) updates.rowEnd = item.rowEnd - 1;
+                        } else {
+                            if (item.rowStart > 1) {
+                                updates.rowStart = item.rowStart - 1;
+                                updates.rowEnd = item.rowEnd - 1;
+                            }
+                        }
+                        break;
+
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        if (isShift) {
+                            if (item.rowEnd <= rows.length) updates.rowEnd = item.rowEnd + 1;
+                        } else {
+                            if (item.rowEnd <= rows.length) {
+                                updates.rowStart = item.rowStart + 1;
+                                updates.rowEnd = item.rowEnd + 1;
+                            }
+                        }
+                        break;
+
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        if (isShift) {
+                            if (item.colEnd > item.colStart + 1) updates.colEnd = item.colEnd - 1;
+                        } else {
+                            if (item.colStart > 1) {
+                                updates.colStart = item.colStart - 1;
+                                updates.colEnd = item.colEnd - 1;
+                            }
+                        }
+                        break;
+
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        if (isShift) {
+                            if (item.colEnd <= columns.length) updates.colEnd = item.colEnd + 1;
+                        } else {
+                            if (item.colEnd <= columns.length) {
+                                updates.colStart = item.colStart + 1;
+                                updates.colEnd = item.colEnd + 1;
+                            }
+                        }
+                        break;
+                }
+
+                // Apply all updates at once to prevent "flipping"
+                if (Object.keys(updates).length > 0) {
+                    updateCurrentItem(updates);
+                }
+        });
+        /* --- */
+        
+        
+        
+        
+        
+        function showAlert(message) {
+            document.getElementById('alert-modal-message').innerText = message;
+            document.getElementById('alert-modal').classList.remove('hidden');
+        }
+
+        function validateDeleteAll() {
+            if (items.length === 0) {
+                showAlert("The canvas is already empty! Add some blocks first.");
+            } else {
+                // This is your existing "Delete All" confirmation modal opener
+                openDeleteBlocksModal(); 
+            }
+        }
+
+        function validateDeleteSingle() {
+            if (items.length === 0) {
+                showAlert("There are no blocks to delete. Start by adding one!");
+            } else if (!selectedItemId) {
+                showAlert("Please select a block on the canvas first.");
+            } else {
+                // This is your existing "Delete Single" confirmation modal opener
+                openDeleteSingleBlockModal();
+            }
+        }
+        
+        
+        
+        
+
+        function downloadDemoHTML() {
+            // 1. Get the code from your existing preview elements
+            const htmlCode = document.getElementById('html-preview').innerText;
+            const cssCode = document.getElementById('css-preview').innerText;
+            const filenameInput = document.getElementById('export-filename').value || 'grid-layout';
+
+            // 2. Build the full document string
+            const fullDoc = `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>GridFlex Demo - ${filenameInput}</title>
+            <style>
+                /* 1. Ensure the html and body take up the full viewport height */
+                html, body { 
+                    height: 100%; 
+                    margin: 0; 
+                    padding: 0; /* Removing padding from body to prevent scrollbars */
+                }
+
+                body { 
+                    font-family: sans-serif; 
+                    background-color: #f8fafc;
+                    display: flex; /* Helps container fill the space */
+                    flex-direction: column;
+                }
+
+                /* 2. Make the container fill the screen */
+                .grid-container {
+                    display: grid;
+                    grid-template-columns: ${columns.join(' ')}; /* Injected from your state */
+                    grid-template-rows: ${rows.join(' ')};       /* Injected from your state */
+                    gap: ${rowGap}px ${colGap}px;
+                    min-height: 100vh; /* Takes full viewport height */
+                    width: 100%;
+                    box-sizing: border-box;
+                    padding: 20px; /* Moved padding here so it doesn't break 100vh */
+                }
+
+                /* Standard item styling for visibility */
+                .grid-item {
+                    color: white;
+                    padding: 20px;
+                    font-weight: bold;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 4px;
+                }
+
+                /* Your generated CSS */
+                ${cssCode}
+            </style>
+        </head>
+        <body>
+            ${htmlCode}
+        </body>
+        </html>`;
+
+            // 3. Create a Blob and trigger download
+            const blob = new Blob([fullDoc], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+
+            a.href = url;
+            a.download = `${filenameInput}-demo.html`;
+            document.body.appendChild(a);
+            a.click();
+
+            // Cleanup
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        
+
+        function directDownloadDemoHTML() {
+            // 1. Generate the strings from your logic
+            const htmlCode = generateHTML(); 
+            const cssCode = generateCSS(); 
+
+            // 2. IMPORTANT: Inject them into the preview elements 
+            // (even if the export modal is hidden, the download function needs to read them from here)
+            document.getElementById('html-preview').innerText = htmlCode;
+            document.getElementById('css-preview').innerText = cssCode;
+
+            // 3. Now call the download function
+            downloadDemoHTML();
+        }
+
+
+
+        // Initialize
+        loadFromLocalStorage();
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeHelp();
+        });
+        
+        toggleSidebar();
+        render();
+        
+    </script>
+</body>
+</html>

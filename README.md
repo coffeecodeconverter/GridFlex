@@ -4,6 +4,8 @@ Building complex layouts in CSS is cumbersome with fine tuning often relying on 
 
 Enter **GridFlex** — a visual designer designed to make CSS Grid intuitive, experimental, and export-ready.
 
+<img height="600" alt="image" src="https://github.com/user-attachments/assets/f81701e8-ec4f-437f-b74e-e1e76d244c11" />
+
 ---
 
 ## 🚀 The Visual First Approach
@@ -40,7 +42,7 @@ Modern web design is currently obsessed with the **Bento Grid**—a layout style
 3.  Adjust the **Placement Steppers** to span blocks across multiple columns or rows.
 4.  Copy the **Generated CSS** directly into your project.
 
-<img width="2227" height="1824" alt="image" src="https://github.com/user-attachments/assets/f81701e8-ec4f-437f-b74e-e1e76d244c11" />
+<img width="1606" height="876" alt="image" src="https://github.com/user-attachments/assets/b00e40a6-4391-4a3c-ad79-5d30f27b78ea" />
 
 ---
 

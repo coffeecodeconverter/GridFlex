@@ -40,6 +40,7 @@ Modern web design is currently obsessed with the **Bento Grid**—a layout style
 3.  Adjust the **Placement Steppers** to span blocks across multiple columns or rows.
 4.  Copy the **Generated CSS** directly into your project.
 
+<img width="2227" height="1824" alt="image" src="https://github.com/user-attachments/assets/f81701e8-ec4f-437f-b74e-e1e76d244c11" />
 
 ---
 

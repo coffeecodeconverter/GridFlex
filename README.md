@@ -61,6 +61,6 @@ Whether you're an admin building a complex dashboard or a developer tired of gue
 
 
 find more: <br>
-https://turnerworks.uk/index.html <br>
+https://turnerworks.uk <br>
 https://github.com/turnerworks <br>
 <Br>
